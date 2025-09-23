@@ -1,0 +1,136 @@
+import { Card, CardContent } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { Mail, Phone, MapPin, Users, Award, Target } from "lucide-react";
+
+const About = () => {
+  return (
+    <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+      {/* Page Header */}
+      <div className="text-center mb-12">
+        <h1 className="font-poppins font-bold text-4xl md:text-5xl mb-6 text-heading">
+          About Sanaa Thru' My Lens
+        </h1>
+        <p className="font-lora text-lg text-muted-foreground max-w-3xl mx-auto leading-relaxed">
+          We are passionate storytellers dedicated to showcasing Kenya's rich artistic heritage 
+          and contemporary creative culture through authentic narratives and compelling visuals.
+        </p>
+      </div>
+
+      <div className="grid lg:grid-cols-2 gap-12 items-center mb-16">
+        <div>
+          <h2 className="font-poppins font-semibold text-3xl mb-6 text-heading">Our Mission</h2>
+          <p className="font-lora text-content leading-relaxed mb-6">
+            Sanaa Thru' My Lens exists to celebrate, document, and amplify Kenya's vibrant 
+            creative ecosystem. We bridge the gap between traditional craftsmanship and 
+            contemporary artistic expression, ensuring that our cultural heritage continues 
+            to inspire future generations.
+          </p>
+          <p className="font-lora text-content leading-relaxed mb-8">
+            Through in-depth profiles, cultural analysis, and visual storytelling, we provide 
+            a platform for both established and emerging artists to share their stories with 
+            local and international audiences.
+          </p>
+          <Button className="btn-hero">
+            Get in Touch
+          </Button>
+        </div>
+        <div className="relative">
+          <img 
+            src="/api/placeholder/600/400" 
+            alt="Kenyan artists at work"
+            className="rounded-2xl shadow-warm w-full"
+          />
+        </div>
+      </div>
+
+      {/* Values Section */}
+      <div className="grid md:grid-cols-3 gap-8 mb-16">
+        <Card className="feature-card text-center">
+          <CardContent className="p-8">
+            <div className="w-16 h-16 bg-primary/10 rounded-full flex items-center justify-center mx-auto mb-4">
+              <Award className="w-8 h-8 text-primary" />
+            </div>
+            <h3 className="font-poppins font-semibold text-xl mb-3 text-heading">Excellence</h3>
+            <p className="font-lora text-content text-sm">
+              We maintain the highest standards in our storytelling, ensuring every article 
+              honors the artists and their craft with authenticity and respect.
+            </p>
+          </CardContent>
+        </Card>
+
+        <Card className="feature-card text-center">
+          <CardContent className="p-8">
+            <div className="w-16 h-16 bg-accent/10 rounded-full flex items-center justify-center mx-auto mb-4">
+              <Users className="w-8 h-8 text-accent" />
+            </div>
+            <h3 className="font-poppins font-semibold text-xl mb-3 text-heading">Community</h3>
+            <p className="font-lora text-content text-sm">
+              We believe in building bridges between artists, collectors, and art enthusiasts, 
+              fostering a supportive creative community across Kenya.
+            </p>
+          </CardContent>
+        </Card>
+
+        <Card className="feature-card text-center">
+          <CardContent className="p-8">
+            <div className="w-16 h-16 bg-secondary/10 rounded-full flex items-center justify-center mx-auto mb-4">
+              <Target className="w-8 h-8 text-secondary" />
+            </div>
+            <h3 className="font-poppins font-semibold text-xl mb-3 text-heading">Impact</h3>
+            <p className="font-lora text-content text-sm">
+              Our goal is to create lasting positive impact by elevating Kenyan art on the 
+              global stage and supporting artists in their creative journeys.
+            </p>
+          </CardContent>
+        </Card>
+      </div>
+
+      {/* Team Section */}
+      <div className="text-center mb-12">
+        <h2 className="font-poppins font-semibold text-3xl mb-6 text-heading">Meet Our Team</h2>
+        <p className="font-lora text-muted-foreground max-w-2xl mx-auto">
+          A diverse group of writers, photographers, and cultural enthusiasts united by our 
+          love for Kenyan art and creativity.
+        </p>
+      </div>
+
+      <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8 mb-16">
+        {[
+          {
+            name: "Amina Wanjiku",
+            role: "Founder & Editor-in-Chief",
+            bio: "Cultural curator with over 10 years of experience documenting African art and heritage.",
+            image: "/api/placeholder/300/300"
+          },
+          {
+            name: "David Kimani",
+            role: "Senior Writer",
+            bio: "Specializes in traditional crafts and their intersection with contemporary design.",
+            image: "/api/placeholder/300/300"
+          },
+          {
+            name: "Sarah Muthoni", 
+            role: "Photography Director",
+            bio: "Visual storyteller passionate about capturing the essence of Kenyan creativity.",
+            image: "/api/placeholder/300/300"
+          }
+        ].map((member, index) => (
+          <Card key={index} className="feature-card text-center">
+            <CardContent className="p-6">
+              <img 
+                src={member.image}
+                alt={member.name}
+                className="w-24 h-24 rounded-full object-cover mx-auto mb-4"
+              />
+              <h3 className="font-poppins font-semibold text-lg mb-1 text-heading">{member.name}</h3>
+              <p className="text-primary font-poppins font-medium text-sm mb-3">{member.role}</p>
+              <p className="font-lora text-content text-sm">{member.bio}</p>
+            </CardContent>
+          </Card>
+        ))}
+      </div>
+    </div>
+  );
+};
+
+export default About;

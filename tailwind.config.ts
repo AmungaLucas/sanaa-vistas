@@ -57,6 +57,29 @@ export default {
           border: "hsl(var(--sidebar-border))",
           ring: "hsl(var(--sidebar-ring))",
         },
+        // African-inspired earth tones
+        earth: {
+          brown: "hsl(var(--earth-brown))",
+          green: "hsl(var(--earth-green))", 
+          orange: "hsl(var(--sunset-orange))",
+          gold: "hsl(var(--golden-highlight))"
+        }
+      },
+      fontFamily: {
+        poppins: ['Poppins', 'sans-serif'],
+        lora: ['Lora', 'serif'],
+        sans: ['Poppins', 'system-ui', 'sans-serif'],
+        serif: ['Lora', 'Georgia', 'serif'],
+      },
+      backgroundImage: {
+        'hero-gradient': 'var(--gradient-hero)',
+        'card-gradient': 'var(--gradient-card)',
+        'accent-gradient': 'var(--gradient-accent)',
+        'texture': 'var(--texture-overlay)',
+      },
+      boxShadow: {
+        'warm': 'var(--shadow-warm)',
+        'hero': 'var(--shadow-hero)',
       },
       borderRadius: {
         lg: "var(--radius)",

@@ -1,58 +1,78 @@
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&family=Lora:wght@400;500;600;700&display=swap');
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
-/* Definition of the design system. All colors, gradients, fonts, etc should be defined here. 
-All colors MUST be HSL.
-*/
+/* Sanaa Thru' My Lens Design System - Earthy & Bold Kenyan Creative Culture */
 
 @layer base {
   :root {
-    --background: 0 0% 100%;
-    --foreground: 222.2 84% 4.9%;
+    /* Earth-based color palette with vibrant African-inspired accents */
+    --background: 42 15% 97%; /* Warm cream background */
+    --foreground: 25 25% 15%; /* Rich dark brown text */
 
-    --card: 0 0% 100%;
-    --card-foreground: 222.2 84% 4.9%;
+    /* Card system with subtle earth tones */
+    --card: 40 20% 99%;
+    --card-foreground: 25 25% 15%;
 
-    --popover: 0 0% 100%;
-    --popover-foreground: 222.2 84% 4.9%;
+    --popover: 40 20% 99%;
+    --popover-foreground: 25 25% 15%;
 
-    --primary: 222.2 47.4% 11.2%;
-    --primary-foreground: 210 40% 98%;
+    /* Primary: Rich terracotta/burnt orange - main brand color */
+    --primary: 16 85% 55%; /* Vibrant terracotta */
+    --primary-foreground: 42 15% 97%;
 
-    --secondary: 210 40% 96.1%;
-    --secondary-foreground: 222.2 47.4% 11.2%;
+    /* Secondary: Sage green inspired by African landscapes */
+    --secondary: 95 25% 65%; /* Sage green */
+    --secondary-foreground: 25 25% 15%;
 
-    --muted: 210 40% 96.1%;
-    --muted-foreground: 215.4 16.3% 46.9%;
+    /* Muted: Warm neutral tones */
+    --muted: 42 10% 92%;
+    --muted-foreground: 25 15% 45%;
 
-    --accent: 210 40% 96.1%;
-    --accent-foreground: 222.2 47.4% 11.2%;
+    /* Accent: Golden yellow for highlights and CTAs */
+    --accent: 45 95% 60%; /* Golden yellow */
+    --accent-foreground: 25 25% 15%;
 
-    --destructive: 0 84.2% 60.2%;
-    --destructive-foreground: 210 40% 98%;
+    /* Destructive remains standard */
+    --destructive: 0 84% 60%;
+    --destructive-foreground: 42 15% 97%;
 
-    --border: 214.3 31.8% 91.4%;
-    --input: 214.3 31.8% 91.4%;
-    --ring: 222.2 84% 4.9%;
+    /* Borders and inputs with earthy tones */
+    --border: 42 15% 85%;
+    --input: 42 15% 90%;
+    --ring: 16 85% 55%;
 
-    --radius: 0.5rem;
+    /* Design system extensions for African-inspired elements */
+    --earth-brown: 25 35% 35%; /* Rich earth brown */
+    --earth-green: 95 30% 50%; /* Deep sage */
+    --sunset-orange: 25 90% 65%; /* Warm sunset */
+    --golden-highlight: 45 100% 70%; /* Bright gold */
+    
+    /* Gradients for hero and feature sections */
+    --gradient-hero: linear-gradient(135deg, hsl(16 85% 55% / 0.9), hsl(45 95% 60% / 0.8));
+    --gradient-card: linear-gradient(145deg, hsl(40 20% 99%), hsl(42 15% 96%));
+    --gradient-accent: linear-gradient(90deg, hsl(16 85% 55%), hsl(25 90% 65%));
+    
+    /* Shadows with warm undertones */
+    --shadow-warm: 0 4px 20px hsl(25 35% 35% / 0.1);
+    --shadow-hero: 0 20px 60px hsl(16 85% 55% / 0.2);
+    
+    /* Texture overlay for African-inspired backgrounds */
+    --texture-overlay: url("data:image/svg+xml,%3Csvg width='40' height='40' viewBox='0 0 40 40' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='%23000000' fill-opacity='0.02'%3E%3Cpath d='M20 20c0-11.046-8.954-20-20-20s-20 8.954-20 20 8.954 20 20 20 20-8.954 20-20zm-20-18c9.941 0 18 8.059 18 18s-8.059 18-18 18-18-8.059-18-18 8.059-18 18-18z'/%3E%3C/g%3E%3C/svg%3E");
 
-    --sidebar-background: 0 0% 98%;
+    --radius: 0.75rem;
 
-    --sidebar-foreground: 240 5.3% 26.1%;
-
-    --sidebar-primary: 240 5.9% 10%;
-
-    --sidebar-primary-foreground: 0 0% 98%;
-
-    --sidebar-accent: 240 4.8% 95.9%;
-
-    --sidebar-accent-foreground: 240 5.9% 10%;
-
-    --sidebar-border: 220 13% 91%;
-
-    --sidebar-ring: 217.2 91.2% 59.8%;
+    /* Sidebar with earth tones */
+    --sidebar-background: 42 20% 96%;
+    --sidebar-foreground: 25 25% 25%;
+    --sidebar-primary: 16 85% 55%;
+    --sidebar-primary-foreground: 42 15% 97%;
+    --sidebar-accent: 42 15% 90%;
+    --sidebar-accent-foreground: 25 25% 25%;
+    --sidebar-border: 42 15% 85%;
+    --sidebar-ring: 16 85% 55%;
   }
 
   .dark {
@@ -101,5 +121,74 @@ All colors MUST be HSL.
 
   body {
     @apply bg-background text-foreground;
+    background-image: var(--texture-overlay);
+    font-family: 'Lora', serif;
+  }
+  
+  /* Typography System - Poppins for UI, Lora for content */
+  h1, h2, h3, h4, h5, h6, 
+  .heading, .ui-text, 
+  button, .button,
+  nav, .nav {
+    font-family: 'Poppins', sans-serif;
+  }
+  
+  /* Content and paragraph text uses Lora */
+  p, .content, article, .prose {
+    font-family: 'Lora', serif;
+  }
+}
+
+@layer components {
+  /* Hero Button Variants */
+  .btn-hero {
+    @apply bg-primary text-primary-foreground hover:bg-primary/90 
+           px-8 py-4 rounded-lg font-poppins font-medium
+           shadow-[var(--shadow-warm)] hover:shadow-[var(--shadow-hero)]
+           transition-all duration-300;
+  }
+  
+  .btn-hero-outline {
+    @apply border-2 border-primary text-primary hover:bg-primary hover:text-primary-foreground
+           px-8 py-4 rounded-lg font-poppins font-medium
+           transition-all duration-300;
+  }
+  
+  .btn-accent {
+    @apply bg-accent text-accent-foreground hover:bg-accent/90
+           px-6 py-3 rounded-lg font-poppins font-medium
+           transition-all duration-300;
+  }
+  
+  /* Card Components */
+  .post-card {
+    @apply bg-card border border-border rounded-xl overflow-hidden
+           shadow-[var(--shadow-warm)] hover:shadow-lg
+           transition-all duration-300 hover:-translate-y-1;
+  }
+  
+  .feature-card {
+    @apply bg-gradient-to-br from-card to-muted/50
+           border border-border rounded-xl p-6
+           shadow-[var(--shadow-warm)]
+           transition-all duration-300;
+  }
+  
+  /* Typography Utilities */
+  .text-heading {
+    @apply font-poppins font-semibold text-foreground;
+  }
+  
+  .text-content {
+    @apply font-lora text-foreground/90 leading-relaxed;
+  }
+  
+  /* African-inspired gradient backgrounds */
+  .bg-hero-gradient {
+    background: var(--gradient-hero);
+  }
+  
+  .bg-accent-gradient {
+    background: var(--gradient-accent);
   }
 }

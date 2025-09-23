@@ -1,0 +1,149 @@
+import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Mail, Facebook, Twitter, Instagram, Youtube } from "lucide-react";
+import { categories, trendingPosts } from "@/data/mockPosts";
+import PostCard from "./PostCard";
+import { useState } from "react";
+
+const Sidebar = () => {
+  const [email, setEmail] = useState("");
+
+  const handleNewsletterSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    // Handle newsletter signup
+    console.log("Newsletter signup:", email);
+    setEmail("");
+  };
+
+  return (
+    <aside className="space-y-6">
+      {/* Categories */}
+      <Card className="feature-card">
+        <CardHeader>
+          <CardTitle className="text-heading text-lg">Categories</CardTitle>
+        </CardHeader>
+        <CardContent>
+          <div className="flex flex-wrap gap-2">
+            {categories.map((category) => (
+              <Badge 
+                key={category} 
+                variant="outline" 
+                className="cursor-pointer hover:bg-primary hover:text-primary-foreground transition-colors"
+              >
+                {category}
+              </Badge>
+            ))}
+          </div>
+        </CardContent>
+      </Card>
+
+      {/* Google Ads Placeholder */}
+      <Card className="feature-card">
+        <CardContent className="p-6">
+          <div className="bg-muted rounded-lg h-64 flex items-center justify-center border-2 border-dashed border-border">
+            <div className="text-center text-muted-foreground">
+              <div className="text-2xl mb-2">📱</div>
+              <p className="font-poppins font-medium">Advertisement</p>
+              <p className="text-sm">Google Ads Placeholder</p>
+            </div>
+          </div>
+        </CardContent>
+      </Card>
+
+      {/* Trending Posts */}
+      <Card className="feature-card">
+        <CardHeader>
+          <CardTitle className="text-heading text-lg">Trending Posts</CardTitle>
+        </CardHeader>
+        <CardContent className="p-0">
+          <div className="space-y-0">
+            {trendingPosts.map((post) => (
+              <PostCard key={post.id} post={post} variant="compact" />
+            ))}
+          </div>
+        </CardContent>
+      </Card>
+
+      {/* Author Bio */}
+      <Card className="feature-card">
+        <CardHeader>
+          <CardTitle className="text-heading text-lg">About the Author</CardTitle>
+        </CardHeader>
+        <CardContent>
+          <div className="flex items-center gap-4 mb-4">
+            <img 
+              src="/api/placeholder/80/80" 
+              alt="Author Avatar"
+              className="w-16 h-16 rounded-full object-cover"
+            />
+            <div>
+              <h3 className="font-poppins font-semibold">Amina Wanjiku</h3>
+              <p className="text-sm text-muted-foreground">Cultural Curator</p>
+            </div>
+          </div>
+          <p className="text-content text-sm text-muted-foreground mb-4">
+            Passionate about documenting and celebrating Kenya's rich artistic heritage, 
+            connecting traditional crafts with contemporary creative expression.
+          </p>
+          <div className="flex gap-2">
+            <Button size="sm" variant="outline" className="p-2">
+              <Facebook className="w-4 h-4" />
+            </Button>
+            <Button size="sm" variant="outline" className="p-2">
+              <Twitter className="w-4 h-4" />
+            </Button>
+            <Button size="sm" variant="outline" className="p-2">
+              <Instagram className="w-4 h-4" />
+            </Button>
+            <Button size="sm" variant="outline" className="p-2">
+              <Youtube className="w-4 h-4" />
+            </Button>
+          </div>
+        </CardContent>
+      </Card>
+
+      {/* Newsletter Signup */}
+      <Card className="feature-card">
+        <CardHeader>
+          <CardTitle className="text-heading text-lg">Stay Updated</CardTitle>
+        </CardHeader>
+        <CardContent>
+          <p className="text-content text-sm text-muted-foreground mb-4">
+            Get the latest articles about Kenya's art and culture delivered to your inbox.
+          </p>
+          <form onSubmit={handleNewsletterSubmit} className="space-y-3">
+            <Input 
+              type="email"
+              placeholder="Enter your email"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              required
+              className="font-lora"
+            />
+            <Button type="submit" className="w-full btn-accent">
+              <Mail className="w-4 h-4 mr-2" />
+              Subscribe
+            </Button>
+          </form>
+        </CardContent>
+      </Card>
+
+      {/* Another Google Ads Placeholder */}
+      <Card className="feature-card">
+        <CardContent className="p-6">
+          <div className="bg-muted rounded-lg h-48 flex items-center justify-center border-2 border-dashed border-border">
+            <div className="text-center text-muted-foreground">
+              <div className="text-xl mb-2">🎨</div>
+              <p className="font-poppins font-medium text-sm">Sponsored Content</p>
+              <p className="text-xs">Advertisement Space</p>
+            </div>
+          </div>
+        </CardContent>
+      </Card>
+    </aside>
+  );
+};
+
+export default Sidebar;
