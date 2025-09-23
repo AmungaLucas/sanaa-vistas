@@ -1,17 +1,63 @@
 import { useParams } from "react-router-dom";
-import { mockPosts } from "@/data/mockPosts";
+import { useEffect, useState } from "react";
+import { getPostBySlug } from "@/lib/getPostBySlug";
+import { getPosts, type Post } from "@/lib/getPosts";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Clock, Eye, Heart, User, Share2, Bookmark, Facebook, Twitter, Linkedin } from "lucide-react";
 import { Card, CardContent } from "@/components/ui/card";
 import PostCard from "@/components/PostCard";
-import { useState } from "react";
-
 const PostDetail = () => {
   const { slug } = useParams();
-  const post = mockPosts.find(p => p.slug === slug);
+  const [post, setPost] = useState<Post | null>(null);
+  const [relatedPosts, setRelatedPosts] = useState<Post[]>([]);
+  const [loading, setLoading] = useState(true);
   const [liked, setLiked] = useState(false);
   const [bookmarked, setBookmarked] = useState(false);
+
+  useEffect(() => {
+    const fetchPost = async () => {
+      if (!slug) return;
+      
+      try {
+        const [postData, allPosts] = await Promise.all([
+          getPostBySlug(slug),
+          getPosts()
+        ]);
+        
+        setPost(postData);
+        
+        if (postData) {
+          const related = allPosts
+            .filter(p => p.id !== postData.id && p.categories.some(cat => postData.categories.includes(cat)))
+            .slice(0, 3);
+          setRelatedPosts(related);
+        }
+      } catch (error) {
+        console.error("Error fetching post:", error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchPost();
+  }, [slug]);
+
+  if (loading) {
+    return (
+      <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+        <div className="animate-pulse">
+          <div className="h-8 bg-muted rounded w-3/4 mb-4"></div>
+          <div className="h-64 bg-muted rounded mb-6"></div>
+          <div className="space-y-3">
+            <div className="h-4 bg-muted rounded"></div>
+            <div className="h-4 bg-muted rounded w-5/6"></div>
+            <div className="h-4 bg-muted rounded w-4/6"></div>
+          </div>
+        </div>
+      </div>
+    );
+  }
 
   if (!post) {
     return (
@@ -24,9 +70,6 @@ const PostDetail = () => {
     );
   }
 
-  const relatedPosts = mockPosts
-    .filter(p => p.id !== post.id && p.categories.some(cat => post.categories.includes(cat)))
-    .slice(0, 3);
 
   const formatDate = (date: Date) => {
     return date.toLocaleDateString('en-US', { 

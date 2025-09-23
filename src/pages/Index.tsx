@@ -1,9 +1,41 @@
+import { useEffect, useState } from "react";
+import { getPosts, getFeaturedPosts, type Post } from "@/lib/getPosts";
 import Hero from "@/components/Hero";
 import PostCard from "@/components/PostCard";
 import Sidebar from "@/components/Sidebar";
-import { mockPosts, featuredPosts } from "@/data/mockPosts";
 
 const Index = () => {
+  const [posts, setPosts] = useState<Post[]>([]);
+  const [featuredPosts, setFeaturedPosts] = useState<Post[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchPosts = async () => {
+      try {
+        const [allPosts, featured] = await Promise.all([
+          getPosts(),
+          getFeaturedPosts()
+        ]);
+        setPosts(allPosts);
+        setFeaturedPosts(featured);
+      } catch (error) {
+        console.error("Error fetching posts:", error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchPosts();
+  }, []);
+
+  if (loading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-primary"></div>
+      </div>
+    );
+  }
+
   return (
     <div className="min-h-screen">
       {/* Hero Section */}
@@ -36,7 +68,7 @@ const Index = () => {
               </div>
               
               <div className="grid md:grid-cols-2 gap-6">
-                {mockPosts.slice(0, 6).map((post) => (
+                {posts.slice(0, 6).map((post) => (
                   <PostCard key={post.id} post={post} />
                 ))}
               </div>

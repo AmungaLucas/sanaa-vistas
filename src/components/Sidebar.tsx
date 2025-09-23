@@ -3,12 +3,36 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Mail, Facebook, Twitter, Instagram, Youtube } from "lucide-react";
-import { categories, trendingPosts } from "@/data/mockPosts";
+import { getTrendingPosts, getCategories, type Post } from "@/lib/getPosts";
+import { categories as fallbackCategories } from "@/data/mockPosts";
 import PostCard from "./PostCard";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 
 const Sidebar = () => {
   const [email, setEmail] = useState("");
+  const [trendingPosts, setTrendingPosts] = useState<Post[]>([]);
+  const [categories, setCategories] = useState<string[]>(fallbackCategories);
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const [trending, cats] = await Promise.all([
+          getTrendingPosts(),
+          getCategories()
+        ]);
+        setTrendingPosts(trending);
+        
+        // Use Firebase categories if available, otherwise keep fallback
+        if (cats.length > 0) {
+          setCategories(cats);
+        }
+      } catch (error) {
+        console.error("Error fetching sidebar data:", error);
+      }
+    };
+
+    fetchData();
+  }, []);
 
   const handleNewsletterSubmit = (e: React.FormEvent) => {
     e.preventDefault();
