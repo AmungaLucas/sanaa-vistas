@@ -3,21 +3,11 @@ import { getPosts, getFeaturedPosts, type Post } from "@/lib/getPosts";
 import Hero from "@/components/Hero";
 import PostCard from "@/components/PostCard";
 import Sidebar from "@/components/Sidebar";
-import { 
-  Pagination, 
-  PaginationContent, 
-  PaginationItem, 
-  PaginationLink, 
-  PaginationNext, 
-  PaginationPrevious 
-} from "@/components/ui/pagination";
 
 const Index = () => {
   const [posts, setPosts] = useState<Post[]>([]);
   const [featuredPosts, setFeaturedPosts] = useState<Post[]>([]);
   const [loading, setLoading] = useState(true);
-  const [currentPage, setCurrentPage] = useState(1);
-  const postsPerPage = 8;
 
   useEffect(() => {
     const fetchPosts = async () => {
@@ -77,73 +67,11 @@ const Index = () => {
                 <span className="text-sm text-muted-foreground">Fresh perspectives</span>
               </div>
               
-              <div className="grid md:grid-cols-2 gap-6 mb-8">
-                {posts
-                  .slice((currentPage - 1) * postsPerPage, currentPage * postsPerPage)
-                  .map((post) => (
-                    <PostCard key={post.id} post={post} />
-                  ))}
+              <div className="grid md:grid-cols-2 gap-6">
+                {posts.slice(0, 6).map((post) => (
+                  <PostCard key={post.id} post={post} />
+                ))}
               </div>
-
-              {/* Pagination */}
-              {posts.length > postsPerPage && (
-                <div className="flex justify-center">
-                  <Pagination>
-                    <PaginationContent>
-                      {currentPage > 1 && (
-                        <PaginationItem>
-                          <PaginationPrevious 
-                            href="#" 
-                            onClick={(e) => {
-                              e.preventDefault();
-                              setCurrentPage(currentPage - 1);
-                              window.scrollTo({ top: 0, behavior: 'smooth' });
-                            }}
-                          />
-                        </PaginationItem>
-                      )}
-                      
-                      {Array.from({ length: Math.ceil(posts.length / postsPerPage) }, (_, i) => i + 1)
-                        .filter(page => 
-                          page === 1 || 
-                          page === Math.ceil(posts.length / postsPerPage) || 
-                          Math.abs(page - currentPage) <= 2
-                        )
-                        .map((page, index, array) => (
-                          <PaginationItem key={page}>
-                            {index > 0 && array[index - 1] !== page - 1 && (
-                              <span className="px-2">...</span>
-                            )}
-                            <PaginationLink
-                              href="#"
-                              isActive={currentPage === page}
-                              onClick={(e) => {
-                                e.preventDefault();
-                                setCurrentPage(page);
-                                window.scrollTo({ top: 0, behavior: 'smooth' });
-                              }}
-                            >
-                              {page}
-                            </PaginationLink>
-                          </PaginationItem>
-                        ))}
-                      
-                      {currentPage < Math.ceil(posts.length / postsPerPage) && (
-                        <PaginationItem>
-                          <PaginationNext 
-                            href="#" 
-                            onClick={(e) => {
-                              e.preventDefault();
-                              setCurrentPage(currentPage + 1);
-                              window.scrollTo({ top: 0, behavior: 'smooth' });
-                            }}
-                          />
-                        </PaginationItem>
-                      )}
-                    </PaginationContent>
-                  </Pagination>
-                </div>
-              )}
             </section>
           </div>
 
