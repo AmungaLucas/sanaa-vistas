@@ -20,7 +20,7 @@ const PostCard = ({ post, variant = "default" }: PostCardProps) => {
 
   if (variant === "compact") {
     return (
-      <Link to={`/post/${post.slug}`} className="group">
+      <Link to={`/${post.slug}`} className="group">
         <article className="flex gap-4 p-4 border-b border-border hover:bg-muted/30 transition-colors">
           <img 
             src={post.featuredImage} 
@@ -72,7 +72,7 @@ const PostCard = ({ post, variant = "default" }: PostCardProps) => {
             ))}
           </div>
           <h2 className="font-poppins font-bold text-2xl mb-3 line-clamp-2 hover:text-primary transition-colors">
-            <Link to={`/post/${post.slug}`}>
+      <Link to={`/${post.slug}`}>
               {post.title}
             </Link>
           </h2>
@@ -101,7 +101,7 @@ const PostCard = ({ post, variant = "default" }: PostCardProps) => {
               </div>
             </div>
             <Button variant="outline" size="sm" asChild>
-              <Link to={`/post/${post.slug}`}>
+              <Link to={`/${post.slug}`}>
                 Read More
               </Link>
             </Button>
@@ -139,7 +139,7 @@ const PostCard = ({ post, variant = "default" }: PostCardProps) => {
           ))}
         </div>
         <h3 className="font-poppins font-semibold text-lg mb-2 line-clamp-2 hover:text-primary transition-colors">
-          <Link to={`/post/${post.slug}`}>
+          <Link to={`/${post.slug}`}>
             {post.title}
           </Link>
         </h3>

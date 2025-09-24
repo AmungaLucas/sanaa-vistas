@@ -55,6 +55,7 @@ const Sidebar = () => {
                 key={category} 
                 variant="outline" 
                 className="cursor-pointer hover:bg-primary hover:text-primary-foreground transition-colors"
+                onClick={() => window.location.href = `/categories?category=${encodeURIComponent(category)}`}
               >
                 {category}
               </Badge>
