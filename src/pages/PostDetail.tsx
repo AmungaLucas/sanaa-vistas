@@ -4,11 +4,9 @@ import { getPostBySlug } from "@/lib/getPostBySlug";
 import { getPosts, type Post } from "@/lib/getPosts";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Clock, Eye, Heart, User, Share2, Bookmark, Facebook, Twitter, Linkedin, MessageCircle } from "lucide-react";
+import { Clock, Eye, Heart, User, Share2, Bookmark, Facebook, Twitter, Linkedin } from "lucide-react";
 import { Card, CardContent } from "@/components/ui/card";
 import PostCard from "@/components/PostCard";
-import { CommentForm } from "@/components/CommentForm";
-import { CommentsList } from "@/components/CommentsList";
 const PostDetail = () => {
   const { slug } = useParams();
   const [post, setPost] = useState<Post | null>(null);
@@ -16,7 +14,6 @@ const PostDetail = () => {
   const [loading, setLoading] = useState(true);
   const [liked, setLiked] = useState(false);
   const [bookmarked, setBookmarked] = useState(false);
-  const [commentRefresh, setCommentRefresh] = useState(0);
 
   useEffect(() => {
     const fetchPost = async () => {
@@ -241,28 +238,6 @@ const PostDetail = () => {
           </CardContent>
         </Card>
       </article>
-
-      {/* Comments Section */}
-      {post && (
-        <section className="mt-16 max-w-4xl mx-auto">
-          <div className="flex items-center gap-2 mb-8">
-            <MessageCircle className="w-6 h-6 text-primary" />
-            <h2 className="font-poppins font-bold text-2xl text-heading">Comments</h2>
-          </div>
-          
-          <div className="space-y-8">
-            <CommentsList 
-              postId={post.id} 
-              refreshTrigger={commentRefresh}
-            />
-            
-            <CommentForm 
-              postId={post.id}
-              onCommentAdded={() => setCommentRefresh(prev => prev + 1)}
-            />
-          </div>
-        </section>
-      )}
 
       {/* Related Posts */}
       {relatedPosts.length > 0 && (
