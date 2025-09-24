@@ -4,13 +4,23 @@ import { getPosts, getCategories, type Post } from "@/lib/getPosts";
 import PostCard from "@/components/PostCard";
 import Sidebar from "@/components/Sidebar";
 import { Badge } from "@/components/ui/badge";
+import { 
+  Pagination, 
+  PaginationContent, 
+  PaginationItem, 
+  PaginationLink, 
+  PaginationNext, 
+  PaginationPrevious 
+} from "@/components/ui/pagination";
 
 const Categories = () => {
   const [searchParams] = useSearchParams();
   const [posts, setPosts] = useState<Post[]>([]);
   const [categories, setCategories] = useState<string[]>([]);
   const [loading, setLoading] = useState(true);
+  const [currentPage, setCurrentPage] = useState(1);
   const selectedCategory = searchParams.get("category");
+  const postsPerPage = 8;
 
   useEffect(() => {
     const fetchData = async () => {
@@ -34,6 +44,17 @@ const Categories = () => {
   const filteredPosts = selectedCategory 
     ? posts.filter(post => post.categories.includes(selectedCategory))
     : posts;
+
+  // Reset pagination when category changes
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [selectedCategory]);
+
+  const totalPages = Math.ceil(filteredPosts.length / postsPerPage);
+  const paginatedPosts = filteredPosts.slice(
+    (currentPage - 1) * postsPerPage, 
+    currentPage * postsPerPage
+  );
 
   if (loading) {
     return (
@@ -83,9 +104,9 @@ const Categories = () => {
             </div>
 
             {/* Posts Grid */}
-            <div className="grid md:grid-cols-2 gap-6">
-              {filteredPosts.length > 0 ? (
-                filteredPosts.map((post) => (
+            <div className="grid md:grid-cols-2 gap-6 mb-8">
+              {paginatedPosts.length > 0 ? (
+                paginatedPosts.map((post) => (
                   <PostCard key={post.id} post={post} />
                 ))
               ) : (
@@ -96,6 +117,66 @@ const Categories = () => {
                 </div>
               )}
             </div>
+
+            {/* Pagination */}
+            {filteredPosts.length > postsPerPage && (
+              <div className="flex justify-center">
+                <Pagination>
+                  <PaginationContent>
+                    {currentPage > 1 && (
+                      <PaginationItem>
+                        <PaginationPrevious 
+                          href="#" 
+                          onClick={(e) => {
+                            e.preventDefault();
+                            setCurrentPage(currentPage - 1);
+                            window.scrollTo({ top: 0, behavior: 'smooth' });
+                          }}
+                        />
+                      </PaginationItem>
+                    )}
+                    
+                    {Array.from({ length: totalPages }, (_, i) => i + 1)
+                      .filter(page => 
+                        page === 1 || 
+                        page === totalPages || 
+                        Math.abs(page - currentPage) <= 2
+                      )
+                      .map((page, index, array) => (
+                        <PaginationItem key={page}>
+                          {index > 0 && array[index - 1] !== page - 1 && (
+                            <span className="px-2">...</span>
+                          )}
+                          <PaginationLink
+                            href="#"
+                            isActive={currentPage === page}
+                            onClick={(e) => {
+                              e.preventDefault();
+                              setCurrentPage(page);
+                              window.scrollTo({ top: 0, behavior: 'smooth' });
+                            }}
+                          >
+                            {page}
+                          </PaginationLink>
+                        </PaginationItem>
+                      ))}
+                    
+                    {currentPage < totalPages && (
+                      <PaginationItem>
+                        <PaginationNext 
+                          href="#" 
+                          onClick={(e) => {
+                            e.preventDefault();
+                            setCurrentPage(currentPage + 1);
+                            window.scrollTo({ top: 0, behavior: 'smooth' });
+                          }}
+                        />
+                      </PaginationItem>
+                    )}
+                  </PaginationContent>
+                </Pagination>
+              </div>
+            )}
           </div>
 
           {/* Sidebar */}
