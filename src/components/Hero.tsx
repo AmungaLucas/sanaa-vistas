@@ -31,11 +31,11 @@ const Hero = () => {
         />
       ))}
       
-      {/* Gradient Overlay - left transparent to right opaque */}
-      <div className="absolute inset-0 bg-gradient-to-r from-black/10 via-black/40 to-black/70 z-10" />
+      {/* Gradient Overlay - responsive: mobile top to bottom, desktop left to right */}
+      <div className="absolute inset-0 bg-gradient-to-b from-black/0 via-black/20 to-black/90 md:bg-gradient-to-r md:from-black/10 md:via-black/40 md:to-black/70 z-10" />
       
       {/* Content */}
-      <div className="relative h-full flex items-center z-20">
+      <div className="relative h-full flex items-end md:items-center z-20">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full">
           <div className="flex justify-end">
             <div className="max-w-xl text-right text-white">
