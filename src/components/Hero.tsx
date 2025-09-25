@@ -1,20 +1,41 @@
 import { Button } from "@/components/ui/button";
-import heroImage from "@/assets/hero-image.jpg";
+import { Carousel, CarouselContent, CarouselItem } from "@/components/ui/carousel";
+import Autoplay from "embla-carousel-autoplay";
+import heroImage1 from "@/assets/hero-1.jpg";
+import heroImage2 from "@/assets/hero-2.jpg";  
+import heroImage3 from "@/assets/hero-3.jpg";
 
 const Hero = () => {
+  const heroImages = [heroImage1, heroImage2, heroImage3];
+
   return (
     <section className="relative h-[70vh] min-h-[600px] overflow-hidden rounded-2xl mx-4 mt-6">
-      {/* Background Image */}
-      <div 
-        className="absolute inset-0 bg-cover bg-center bg-no-repeat"
-        style={{ backgroundImage: `url(${heroImage})` }}
-      />
+      {/* Background Carousel */}
+      <Carousel 
+        className="absolute inset-0"
+        plugins={[Autoplay({ delay: 5000 })]}
+        opts={{
+          align: "start",
+          loop: true,
+        }}
+      >
+        <CarouselContent className="h-full">
+          {heroImages.map((image, index) => (
+            <CarouselItem key={index} className="h-full">
+              <div 
+                className="absolute inset-0 bg-cover bg-center bg-no-repeat h-full w-full"
+                style={{ backgroundImage: `url(${image})` }}
+              />
+            </CarouselItem>
+          ))}
+        </CarouselContent>
+      </Carousel>
       
       {/* Gradient Overlay - left transparent to right opaque */}
-      <div className="absolute inset-0 bg-gradient-to-r from-black/10 via-black/40 to-black/70" />
+      <div className="absolute inset-0 bg-gradient-to-r from-black/10 via-black/40 to-black/70 z-10" />
       
       {/* Content */}
-      <div className="relative h-full flex items-center">
+      <div className="relative h-full flex items-center z-20">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full">
           <div className="flex justify-end">
             <div className="max-w-xl text-right text-white">
