@@ -1,35 +1,35 @@
+import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
-import { Carousel, CarouselContent, CarouselItem } from "@/components/ui/carousel";
-import Autoplay from "embla-carousel-autoplay";
 import heroImage1 from "@/assets/hero-1.jpg";
 import heroImage2 from "@/assets/hero-2.jpg";  
 import heroImage3 from "@/assets/hero-3.jpg";
 
 const Hero = () => {
   const heroImages = [heroImage1, heroImage2, heroImage3];
+  const [currentImageIndex, setCurrentImageIndex] = useState(0);
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setCurrentImageIndex((prevIndex) => 
+        prevIndex === heroImages.length - 1 ? 0 : prevIndex + 1
+      );
+    }, 5000);
+
+    return () => clearInterval(interval);
+  }, [heroImages.length]);
 
   return (
     <section className="relative h-[70vh] min-h-[600px] overflow-hidden rounded-2xl mx-4 mt-6">
-      {/* Background Carousel */}
-      <Carousel 
-        className="absolute inset-0"
-        plugins={[Autoplay({ delay: 5000 })]}
-        opts={{
-          align: "start",
-          loop: true,
-        }}
-      >
-        <CarouselContent className="h-full">
-          {heroImages.map((image, index) => (
-            <CarouselItem key={index} className="h-full">
-              <div 
-                className="absolute inset-0 bg-cover bg-center bg-no-repeat h-full w-full"
-                style={{ backgroundImage: `url(${image})` }}
-              />
-            </CarouselItem>
-          ))}
-        </CarouselContent>
-      </Carousel>
+      {/* Background Images with Transition */}
+      {heroImages.map((image, index) => (
+        <div
+          key={index}
+          className={`absolute inset-0 bg-cover bg-center bg-no-repeat transition-opacity duration-1000 ${
+            index === currentImageIndex ? 'opacity-100' : 'opacity-0'
+          }`}
+          style={{ backgroundImage: `url(${image})` }}
+        />
+      ))}
       
       {/* Gradient Overlay - left transparent to right opaque */}
       <div className="absolute inset-0 bg-gradient-to-r from-black/10 via-black/40 to-black/70 z-10" />
