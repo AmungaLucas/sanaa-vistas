@@ -1,10 +1,13 @@
 import { collection, getDocs, query, orderBy, where, limit } from "firebase/firestore";
 import { db } from "./firebaseConfig";
+import { getUserById, type User } from "./getUserById";
 
 export interface Post {
   id: string;
   authorId: string;
   authorName: string;
+  authorProfilePic?: string;
+  authorAbout?: string;
   categories: string[];
   content: string;
   createdAt: Date;
@@ -37,16 +40,29 @@ export const getPosts = async (): Promise<Post[]> => {
     const querySnapshot = await getDocs(q);
     const posts: Post[] = [];
     
-    querySnapshot.forEach((doc) => {
+    // Get all posts first
+    const postsData = querySnapshot.docs.map(doc => {
       const data = doc.data();
-      posts.push({
+      return {
         id: doc.id,
         ...data,
         createdAt: data.createdAt?.toDate() || new Date(),
         publishedAt: data.publishedAt?.toDate() || new Date(),
         updatedAt: data.updatedAt?.toDate() || new Date(),
-      } as Post);
+      } as Post;
     });
+
+    // Fetch author data for each post
+    for (const post of postsData) {
+      if (post.authorId) {
+        const author = await getUserById(post.authorId);
+        if (author) {
+          post.authorProfilePic = author.profilePic;
+          post.authorAbout = author.about;
+        }
+      }
+      posts.push(post);
+    }
     
     return posts;
   } catch (error) {
@@ -69,16 +85,29 @@ export const getFeaturedPosts = async (): Promise<Post[]> => {
     const querySnapshot = await getDocs(q);
     const posts: Post[] = [];
     
-    querySnapshot.forEach((doc) => {
+    // Get all posts first
+    const postsData = querySnapshot.docs.map(doc => {
       const data = doc.data();
-      posts.push({
+      return {
         id: doc.id,
         ...data,
         createdAt: data.createdAt?.toDate() || new Date(),
         publishedAt: data.publishedAt?.toDate() || new Date(),
         updatedAt: data.updatedAt?.toDate() || new Date(),
-      } as Post);
+      } as Post;
     });
+
+    // Fetch author data for each post
+    for (const post of postsData) {
+      if (post.authorId) {
+        const author = await getUserById(post.authorId);
+        if (author) {
+          post.authorProfilePic = author.profilePic;
+          post.authorAbout = author.about;
+        }
+      }
+      posts.push(post);
+    }
     
     return posts;
   } catch (error) {
@@ -127,16 +156,29 @@ export const getTrendingPosts = async (): Promise<Post[]> => {
     const querySnapshot = await getDocs(q);
     const posts: Post[] = [];
     
-    querySnapshot.forEach((doc) => {
+    // Get all posts first
+    const postsData = querySnapshot.docs.map(doc => {
       const data = doc.data();
-      posts.push({
+      return {
         id: doc.id,
         ...data,
         createdAt: data.createdAt?.toDate() || new Date(),
         publishedAt: data.publishedAt?.toDate() || new Date(),
         updatedAt: data.updatedAt?.toDate() || new Date(),
-      } as Post);
+      } as Post;
     });
+
+    // Fetch author data for each post
+    for (const post of postsData) {
+      if (post.authorId) {
+        const author = await getUserById(post.authorId);
+        if (author) {
+          post.authorProfilePic = author.profilePic;
+          post.authorAbout = author.about;
+        }
+      }
+      posts.push(post);
+    }
     
     return posts;
   } catch (error) {

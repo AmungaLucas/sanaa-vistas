@@ -81,7 +81,13 @@ const PostCard = ({ post, variant = "default" }: PostCardProps) => {
           </p>
           <div className="flex items-center justify-between text-sm text-muted-foreground mb-4">
             <div className="flex items-center gap-2">
-              <User className="w-4 h-4" />
+              <div className="w-6 h-6 rounded-full overflow-hidden">
+                <img 
+                  src={post.authorProfilePic || "/api/placeholder/24/24"} 
+                  alt={post.authorName}
+                  className="w-full h-full object-cover"
+                />
+              </div>
               <span className="font-poppins">{post.authorName}</span>
             </div>
             <div className="flex items-center gap-2">
@@ -148,7 +154,13 @@ const PostCard = ({ post, variant = "default" }: PostCardProps) => {
         </p>
         <div className="flex items-center justify-between text-xs text-muted-foreground">
           <div className="flex items-center gap-2">
-            <User className="w-3 h-3" />
+            <div className="w-4 h-4 rounded-full overflow-hidden">
+              <img 
+                src={post.authorProfilePic || "/api/placeholder/16/16"} 
+                alt={post.authorName}
+                className="w-full h-full object-cover"
+              />
+            </div>
             <span className="font-poppins">{post.authorName}</span>
           </div>
           <div className="flex items-center gap-3">

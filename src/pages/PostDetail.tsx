@@ -217,7 +217,7 @@ const PostDetail = () => {
           <CardContent className="p-6">
             <div className="flex items-start gap-4">
               <img 
-                src="/api/placeholder/80/80"
+                src={post.authorProfilePic || "/api/placeholder/80/80"}
                 alt={post.authorName}
                 className="w-16 h-16 rounded-full object-cover flex-shrink-0"
               />
@@ -226,9 +226,7 @@ const PostDetail = () => {
                   {post.authorName}
                 </h3>
                 <p className="font-lora text-content text-sm mb-3">
-                  Cultural curator and writer passionate about documenting Kenya's evolving art scene. 
-                  With over a decade of experience, Amina brings deep insight into the intersection 
-                  of traditional and contemporary African art.
+                  {post.authorAbout || "Passionate writer and cultural curator documenting Kenya's vibrant creative scene."}
                 </p>
                 <Button variant="outline" size="sm">
                   Follow Author
