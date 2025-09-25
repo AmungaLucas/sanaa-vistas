@@ -94,24 +94,18 @@ const About = () => {
         </p>
       </div>
 
-      <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8 mb-16">
+      <div className="grid md:grid-cols-2 gap-8 mb-16 justify-center">
         {[
           {
-            name: "Amina Wanjiku",
-            role: "Founder & Editor-in-Chief",
-            bio: "Cultural curator with over 10 years of experience documenting African art and heritage.",
+            name: "Sharon Agigi",
+            role: "Editor",
+            bio: "Passionate about showcasing Kenya's vibrant creative community and cultural stories.",
             image: "/api/placeholder/300/300"
           },
           {
-            name: "David Kimani",
-            role: "Senior Writer",
-            bio: "Specializes in traditional crafts and their intersection with contemporary design.",
-            image: "/api/placeholder/300/300"
-          },
-          {
-            name: "Sarah Muthoni", 
-            role: "Photography Director",
-            bio: "Visual storyteller passionate about capturing the essence of Kenyan creativity.",
+            name: "Elijoy Gatwiri",
+            role: "Editor",
+            bio: "Dedicated to highlighting emerging artists and contemporary Kenyan art movements.",
             image: "/api/placeholder/300/300"
           }
         ].map((member, index) => (
