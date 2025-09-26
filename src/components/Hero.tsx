@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
+import { Link } from "react-router-dom";
 import heroImage1 from "@/assets/hero-1.jpg";
 import heroImage2 from "@/assets/hero-2.jpg";  
 import heroImage3 from "@/assets/hero-3.jpg";
@@ -47,11 +48,11 @@ const Hero = () => {
                 authentic stories, emerging artists, and the rich tapestry of our cultural heritage.
               </p>
               <div className="flex flex-col sm:flex-row gap-3 md:gap-4 justify-end">
-                <Button className="btn-hero bg-primary hover:bg-primary/90 text-primary-foreground">
-                  Read Latest Posts
+                <Button asChild className="btn-hero bg-primary hover:bg-primary/90 text-primary-foreground">
+                  <Link to="/#latest-articles">Read Latest Posts</Link>
                 </Button>
-                <Button className="btn-hero-outline border-white text-white hover:bg-white hover:text-primary">
-                  Explore Categories
+                <Button asChild className="btn-hero-outline border-white text-white hover:bg-white hover:text-primary">
+                  <Link to="/categories">Explore Categories</Link>
                 </Button>
               </div>
             </div>
