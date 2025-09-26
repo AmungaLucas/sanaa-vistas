@@ -137,38 +137,10 @@ const PostDetail = () => {
               {post.excerpt}
             </p>
             
-            <div className="space-y-6">
-              <p>
-                The contemporary art scene in Kenya is experiencing a remarkable renaissance, 
-                with young artists boldly redefining what it means to be African in the 21st century. 
-                From the bustling galleries of Nairobi to the intimate studios scattered across the country, 
-                a new generation of creatives is emerging with fresh perspectives that honor tradition 
-                while embracing innovation.
-              </p>
-              
-              <p>
-                These artists are not simply creating art for art's sake; they are weaving narratives 
-                that speak to the Kenyan experience, addressing contemporary issues while drawing 
-                from rich cultural heritage. Their work challenges stereotypes, questions societal norms, 
-                and celebrates the complexity of modern African identity.
-              </p>
-              
-              <p>
-                What sets this movement apart is its authentic voice. Unlike previous generations 
-                who often felt pressured to create for Western audiences, today's Kenyan artists 
-                are confidently creating for themselves and their communities first. This shift 
-                has resulted in art that is more genuine, more powerful, and more resonant with 
-                both local and international audiences.
-              </p>
-              
-              <p>
-                The renaissance extends beyond individual artistic expression. Collaborative 
-                spaces, artist collectives, and community-driven initiatives are flourishing, 
-                creating an ecosystem that supports and nurtures creative talent at every level. 
-                This collaborative spirit is essential to sustaining the momentum and ensuring 
-                that Kenya's artistic renaissance continues to grow and evolve.
-              </p>
-            </div>
+            <div 
+              className="space-y-6"
+              dangerouslySetInnerHTML={{ __html: post.content }}
+            />
           </div>
         </div>
 
