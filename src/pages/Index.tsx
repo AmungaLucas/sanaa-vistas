@@ -71,7 +71,7 @@ const Index = () => {
             </section>
 
             {/* Latest Posts Section */}
-            <section>
+            <section id="latest-articles">
               <div className="flex items-center justify-between mb-6">
                 <h2 className="font-poppins font-bold text-2xl text-heading">Latest Articles</h2>
                 <span className="text-sm text-muted-foreground">Fresh perspectives</span>
