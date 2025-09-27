@@ -185,24 +185,43 @@ const PostDetail = () => {
         </div>
 
         {/* Author Bio */}
-        <Card className="feature-card my-8">
-          <CardContent className="p-6">
-            <div className="flex items-start gap-4">
-              <img 
-                src={post.authorProfilePic || "/api/placeholder/80/80"}
+    <Card className="my-12 rounded-2xl shadow-lg border border-border/50 bg-gradient-to-br from-white to-muted/30 dark:from-background dark:to-muted/10">
+          <CardContent className="p-8">
+            <div className="flex flex-col sm:flex-row items-center sm:items-start gap-6 text-center sm:text-left">
+              <img
+                src={post.authorProfilePic || "/api/placeholder/120/120"}
                 alt={post.authorName}
-                className="w-16 h-16 rounded-full object-cover flex-shrink-0"
+                className="w-24 h-24 rounded-full object-cover border-4 border-white shadow-md"
               />
+
               <div className="flex-1">
-                <h3 className="font-poppins font-semibold text-lg text-heading mb-2">
+                <h3 className="font-poppins font-bold text-xl text-heading mb-1">
                   {post.authorName}
                 </h3>
-                <p className="font-lora text-content text-sm mb-3">
-                  {post.authorAbout || "Passionate writer and cultural curator documenting Kenya's vibrant creative scene."}
+                <span className="text-sm text-muted-foreground block mb-3">
+                  Contributor & Cultural Curator
+                </span>
+                <p className="font-lora text-content text-base mb-6 leading-relaxed">
+                  {post.authorAbout ||
+                    "Passionate writer and cultural curator documenting Kenya's vibrant creative scene."}
                 </p>
-                <Button variant="outline" size="sm">
-                  Follow Author
-                </Button>
+
+                <div className="flex flex-wrap justify-center sm:justify-start gap-3">
+                  <Button
+                    variant="default"
+                    size="sm"
+                    className="px-5 py-2 rounded-full"
+                  >
+                    Follow Author
+                  </Button>
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    className="px-5 py-2 rounded-full"
+                  >
+                    View Profile
+                  </Button>
+                </div>
               </div>
             </div>
           </CardContent>
