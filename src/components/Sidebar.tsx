@@ -1,3 +1,4 @@
+import { useState, useEffect } from "react";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -6,7 +7,6 @@ import { getTrendingPosts, getCategories, type Post } from "@/lib/getPosts";
 import { categories as fallbackCategories } from "@/data/mockPosts";
 import PostCard from "./PostCard";
 import SubscribeForm from "./SubscribeForm";
-import { useState, useEffect } from "react";
 
 const Sidebar = () => {
   const [trendingPosts, setTrendingPosts] = useState<Post[]>([]);
