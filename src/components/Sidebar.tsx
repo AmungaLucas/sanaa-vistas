@@ -1,15 +1,14 @@
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Mail, Facebook, Twitter, Instagram, Youtube } from "lucide-react";
+import { Facebook, Twitter, Instagram, Youtube } from "lucide-react";
 import { getTrendingPosts, getCategories, type Post } from "@/lib/getPosts";
 import { categories as fallbackCategories } from "@/data/mockPosts";
 import PostCard from "./PostCard";
+import SubscribeForm from "./SubscribeForm";
 import { useState, useEffect } from "react";
 
 const Sidebar = () => {
-  const [email, setEmail] = useState("");
   const [trendingPosts, setTrendingPosts] = useState<Post[]>([]);
   const [categories, setCategories] = useState<string[]>(fallbackCategories);
 
@@ -33,13 +32,6 @@ const Sidebar = () => {
 
     fetchData();
   }, []);
-
-  const handleNewsletterSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    // Handle newsletter signup
-    console.log("Newsletter signup:", email);
-    setEmail("");
-  };
 
   return (
     <aside className="space-y-6">
@@ -140,31 +132,7 @@ const Sidebar = () => {
       </Card>
 
       {/* Newsletter Signup */}
-      <Card className="feature-card">
-        <CardHeader>
-          <CardTitle className="text-heading text-lg">Stay Updated</CardTitle>
-        </CardHeader>
-        <CardContent>
-          <p className="text-content text-sm text-muted-foreground mb-4">
-            Get the latest articles about Kenya's art and culture delivered to
-            your inbox.
-          </p>
-          <form onSubmit={handleNewsletterSubmit} className="space-y-3">
-            <Input
-              type="email"
-              placeholder="Enter your email"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              required
-              className="font-lora"
-            />
-            <Button type="submit" className="w-full btn-accent">
-              <Mail className="w-4 h-4 mr-2" />
-              Subscribe
-            </Button>
-          </form>
-        </CardContent>
-      </Card>
+      <SubscribeForm />
 
       {/* Another Google Ads Placeholder */}
       <Card className="feature-card">

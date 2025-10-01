@@ -1,13 +1,39 @@
-import { Search, Menu, X } from "lucide-react";
-import { useState } from "react";
-import { Link, useLocation } from "react-router-dom";
+import { Search, Menu, X, User, LogOut } from "lucide-react";
+import { useState, useEffect } from "react";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { auth } from "@/lib/firebaseConfig";
+import { onAuthStateChanged, signOut } from "firebase/auth";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 
 const Navbar = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
+  const [user, setUser] = useState(null);
   const location = useLocation();
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    const unsubscribe = onAuthStateChanged(auth, (firebaseUser) => {
+      setUser(firebaseUser);
+    });
+    return unsubscribe;
+  }, []);
+
+  const handleSignOut = async () => {
+    try {
+      await signOut(auth);
+      navigate("/");
+    } catch (error) {
+      console.error("Error signing out:", error);
+    }
+  };
 
   const navigation = [
     { name: "Home", href: "/" },
@@ -49,7 +75,7 @@ const Navbar = () => {
             ))}
           </div>
 
-          {/* Search Bar */}
+          {/* Search Bar & Auth */}
           <div className="hidden lg:flex items-center space-x-4">
             <div className="relative">
               <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground w-4 h-4" />
@@ -61,6 +87,37 @@ const Navbar = () => {
                 className="pl-10 w-64 font-lora"
               />
             </div>
+            
+            {user ? (
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <Button variant="ghost" size="icon">
+                    {user.photoURL ? (
+                      <img
+                        src={user.photoURL}
+                        alt="Profile"
+                        className="w-8 h-8 rounded-full object-cover"
+                      />
+                    ) : (
+                      <User className="w-5 h-5" />
+                    )}
+                  </Button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent align="end">
+                  <DropdownMenuItem className="font-poppins">
+                    {user.displayName || user.email}
+                  </DropdownMenuItem>
+                  <DropdownMenuItem onClick={handleSignOut} className="font-poppins text-destructive">
+                    <LogOut className="w-4 h-4 mr-2" />
+                    Sign Out
+                  </DropdownMenuItem>
+                </DropdownMenuContent>
+              </DropdownMenu>
+            ) : (
+              <Button asChild variant="default" size="sm">
+                <Link to="/auth" className="font-poppins">Sign In</Link>
+              </Button>
+            )}
           </div>
 
           {/* Mobile menu button */}
@@ -101,6 +158,32 @@ const Navbar = () => {
                 {item.name}
               </Link>
             ))}
+            
+            {/* Mobile Auth */}
+            <div className="pt-4 border-t border-border">
+              {user ? (
+                <div className="space-y-2 px-4">
+                  <p className="text-sm text-muted-foreground font-poppins">
+                    {user.displayName || user.email}
+                  </p>
+                  <Button
+                    onClick={handleSignOut}
+                    variant="destructive"
+                    size="sm"
+                    className="w-full font-poppins"
+                  >
+                    <LogOut className="w-4 h-4 mr-2" />
+                    Sign Out
+                  </Button>
+                </div>
+              ) : (
+                <div className="px-4">
+                  <Button asChild className="w-full font-poppins" size="sm">
+                    <Link to="/auth">Sign In</Link>
+                  </Button>
+                </div>
+              )}
+            </div>
           </div>
         )}
       </div>

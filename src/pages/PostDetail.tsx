@@ -4,21 +4,19 @@ import { useParams } from "react-router-dom";
 import { useEffect, useState } from "react";
 import { getPostBySlug } from "@/lib/getPostBySlug";
 import { getPosts } from "@/lib/getPosts";
-import PostCard from "@/components/PostCard";
-import DOMPurify from "dompurify";
-import ShareButtons from "@/components/ShareButtons";
-import PostActions from "@/components/PostActions";
 import AuthorCard from "@/components/AuthorCard";
 import LoaderSkeleton from "@/components/LoaderSkeleton";
 import SEO from "@/components/SEO";
-import PostMeta from "@/components/PostMeta";
-import PostCategories from "@/components/PostCategories";
 import Comments from "@/components/Comments";
+import PostHeader from "@/components/post/PostHeader";
+import PostContent from "@/components/post/PostContent";
+import PostFooter from "@/components/post/PostFooter";
+import RelatedPosts from "@/components/post/RelatedPosts";
 
 import { auth, db } from "@/lib/firebaseConfig";
 import { onAuthStateChanged } from "firebase/auth";
 import { doc, updateDoc, increment, onSnapshot } from "firebase/firestore";
-import { toggleLike } from "@/lib/updatePostStats";
+import { toggleLike, toggleBookmark } from "@/lib/updatePostStats";
 
 const PostDetail = () => {
   const { slug } = useParams();
@@ -132,9 +130,14 @@ const PostDetail = () => {
     }
   };
 
-  const handleBookmark = () => {
-    if (!user) return alert("Please login to bookmark posts.");
+  const handleBookmark = async () => {
+    if (!post?.id || !user) return alert("Please login to bookmark posts.");
     setBookmarked((prev) => !prev);
+    try {
+      await toggleBookmark(post.id, user.uid, bookmarked);
+    } catch (err) {
+      console.error("Error toggling bookmark:", err);
+    }
   };
 
   return (
@@ -148,101 +151,65 @@ const PostDetail = () => {
       />
 
       <article className="max-w-4xl mx-auto">
-        {/* Categories + Title */}
-        <div className="mb-8">
-          <PostCategories categories={post.categories} />
-          <h1 className="font-poppins font-bold text-2xl md:text-3xl leading-snug mb-4 text-heading">
-            {post.title}
-          </h1>
-          <PostMeta
-            author={post.authorName}
-            date={formatDate(post.publishedAt)}
-            views={post.views}
-            likes={likes}
-          />
-        </div>
+        <PostHeader
+          title={post.title}
+          categories={post.categories}
+          author={post.authorName}
+          date={formatDate(post.publishedAt)}
+          views={post.views}
+          likes={likes}
+        />
 
-        {/* Featured Image */}
-        {post.featuredImage && (
-          <div className="mb-6">
-            <img
-              src={post.featuredImage}
-              alt={post.title}
-              loading="eager"
-              className="w-full h-56 md:h-80 object-cover rounded-xl shadow-md"
-            />
-          </div>
-        )}
+        <PostContent
+          featuredImage={post.featuredImage}
+          title={post.title}
+          excerpt={post.excerpt}
+          content={post.content}
+        />
 
-        {/* Content */}
-        <div className="prose max-w-none mb-6 font-lora text-base leading-relaxed text-content">
-          <p className="text-base font-medium mb-4 text-muted-foreground">
-            {post.excerpt}
-          </p>
-          <div
-            className="space-y-4"
-            dangerouslySetInnerHTML={{
-              __html: DOMPurify.sanitize(post.content),
-            }}
-          />
-        </div>
+        <PostFooter
+          liked={liked}
+          bookmarked={bookmarked}
+          onLike={handleLike}
+          onBookmark={handleBookmark}
+          shareUrl={`${window.location.origin}/${post.slug}`}
+          shareTitle={post.title}
+        />
 
-        {/* Actions */}
-        <div className="flex flex-wrap items-center justify-between gap-3 py-4 border-t border-border">
-          <PostActions
-            initialLiked={liked}
-            initialBookmarked={bookmarked}
-            onLike={handleLike}
-            onBookmark={handleBookmark}
-          />
-          <ShareButtons
-            url={`${window.location.origin}/${post.slug}`}
-            title={post.title}
-            text={`Check out this article: ${post.title}`}
-          />
-        </div>
-
-        {/* Author */}
         <AuthorCard
           name={post.authorName}
           about={post.authorAbout}
           avatar={post.authorProfilePic}
         />
 
-        {/* Comments */}
-        {user ? (
-          <Comments
-            postId={post.id}
-            currentUser={{
-              id: user.uid,
-              name: user.displayName || "Anonymous",
-              avatar: user.photoURL || "https://i.pravatar.cc/100?u=anon",
-            }}
-          />
-        ) : (
-          <p className="text-sm text-muted-foreground mt-6">
-            Please{" "}
-            <a href="/login" className="text-primary font-medium">
-              login
-            </a>{" "}
-            to write a comment.
-          </p>
-        )}
+        {/* Comments Section */}
+        <div className="mt-10">
+          {user ? (
+            <Comments
+              postId={post.id}
+              currentUser={{
+                id: user.uid,
+                name: user.displayName || "Anonymous",
+                avatar: user.photoURL || "https://i.pravatar.cc/100?u=anon",
+              }}
+            />
+          ) : (
+            <div className="text-center py-8 border border-border rounded-xl bg-muted/20">
+              <p className="text-sm text-muted-foreground mb-3">
+                Sign in to join the conversation
+              </p>
+              <a
+                href="/auth"
+                className="inline-block bg-primary text-primary-foreground px-6 py-2 rounded-lg font-medium hover:bg-primary/90 transition-colors"
+              >
+                Sign In
+              </a>
+            </div>
+          )}
+        </div>
       </article>
 
-      {/* Related Posts */}
-      {relatedPosts.length > 0 && (
-        <section className="mt-10">
-          <h2 className="font-poppins font-bold text-lg text-heading mb-6">
-            Related Articles
-          </h2>
-          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
-            {relatedPosts.map((relatedPost) => (
-              <PostCard key={relatedPost.id} post={relatedPost} />
-            ))}
-          </div>
-        </section>
-      )}
+      <RelatedPosts posts={relatedPosts} />
     </div>
   );
 };

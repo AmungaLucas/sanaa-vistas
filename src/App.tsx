@@ -13,6 +13,7 @@ import About from "./pages/About";
 import Contact from "./pages/Contact";
 import Categories from "./pages/Categories";
 import PostDetail from "./pages/PostDetail";
+import Auth from "./pages/Auth";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -37,6 +38,7 @@ const App = () => (
                 <Route path="/about" element={<About />} />
                 <Route path="/contact" element={<Contact />} />
                 <Route path="/categories" element={<Categories />} />
+                <Route path="/auth" element={<Auth />} />
                 <Route path="/:slug" element={<PostDetail />} />
 
                 {/* Catch-all route */}

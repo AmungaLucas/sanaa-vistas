@@ -57,3 +57,32 @@ export const toggleLike = async (
     return { success: false, error: err };
   }
 };
+
+// Toggle bookmark
+export const toggleBookmark = async (
+  postId: string,
+  userId: string,
+  bookmarked: boolean
+) => {
+  try {
+    console.log("toggleBookmark called:", { postId, userId, bookmarked });
+
+    const userRef = doc(db, "users", userId);
+
+    if (bookmarked) {
+      await updateDoc(userRef, {
+        bookmarks: arrayRemove(postId),
+      });
+    } else {
+      await updateDoc(userRef, {
+        bookmarks: arrayUnion(postId),
+      });
+    }
+
+    console.log("toggleBookmark success for postId:", postId);
+    return { success: true, bookmarked: !bookmarked };
+  } catch (err) {
+    console.error("Error toggling bookmark:", err);
+    return { success: false, error: err };
+  }
+};
