@@ -8,6 +8,7 @@ interface PostFooterProps {
   onBookmark: () => void;
   shareUrl: string;
   shareTitle: string;
+  isAuthenticated: boolean;
 }
 
 const PostFooter = ({
@@ -17,6 +18,7 @@ const PostFooter = ({
   onBookmark,
   shareUrl,
   shareTitle,
+  isAuthenticated,
 }: PostFooterProps) => {
   return (
     <div className="flex flex-wrap items-center justify-between gap-3 py-4 border-t border-border">
@@ -25,6 +27,7 @@ const PostFooter = ({
         initialBookmarked={bookmarked}
         onLike={onLike}
         onBookmark={onBookmark}
+        isAuthenticated={isAuthenticated}
       />
       <ShareButtons
         url={shareUrl}

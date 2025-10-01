@@ -174,6 +174,7 @@ const PostDetail = () => {
           onBookmark={handleBookmark}
           shareUrl={`${window.location.origin}/${post.slug}`}
           shareTitle={post.title}
+          isAuthenticated={!!user}
         />
 
         <AuthorCard
@@ -183,30 +184,18 @@ const PostDetail = () => {
         />
 
         {/* Comments Section */}
-        <div className="mt-10">
-          {user ? (
-            <Comments
-              postId={post.id}
-              currentUser={{
-                id: user.uid,
-                name: user.displayName || "Anonymous",
-                avatar: user.photoURL || "https://i.pravatar.cc/100?u=anon",
-              }}
-            />
-          ) : (
-            <div className="text-center py-8 border border-border rounded-xl bg-muted/20">
-              <p className="text-sm text-muted-foreground mb-3">
-                Sign in to join the conversation
-              </p>
-              <a
-                href="/auth"
-                className="inline-block bg-primary text-primary-foreground px-6 py-2 rounded-lg font-medium hover:bg-primary/90 transition-colors"
-              >
-                Sign In
-              </a>
-            </div>
-          )}
-        </div>
+        <Comments
+          postId={post.id}
+          currentUser={
+            user
+              ? {
+                  id: user.uid,
+                  name: user.displayName || "Anonymous",
+                  avatar: user.photoURL || "https://i.pravatar.cc/100?u=anon",
+                }
+              : null
+          }
+        />
       </article>
 
       <RelatedPosts posts={relatedPosts} />

@@ -1,12 +1,15 @@
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Heart, Bookmark } from "lucide-react";
+import { useNavigate } from "react-router-dom";
+import { useToast } from "@/hooks/use-toast";
 
 type PostActionsProps = {
   initialLiked?: boolean;
   initialBookmarked?: boolean;
   onLike?: (liked: boolean) => void;
   onBookmark?: (bookmarked: boolean) => void;
+  isAuthenticated?: boolean;
 };
 
 const PostActions: React.FC<PostActionsProps> = ({
@@ -14,17 +17,44 @@ const PostActions: React.FC<PostActionsProps> = ({
   initialBookmarked = false,
   onLike,
   onBookmark,
+  isAuthenticated = false,
 }) => {
   const [liked, setLiked] = useState(initialLiked);
   const [bookmarked, setBookmarked] = useState(initialBookmarked);
+  const navigate = useNavigate();
+  const { toast } = useToast();
 
   const toggleLike = () => {
+    if (!isAuthenticated) {
+      toast({
+        title: "Authentication required",
+        description: "Please sign in to like posts",
+        action: (
+          <Button size="sm" onClick={() => navigate("/auth")}>
+            Sign In
+          </Button>
+        ),
+      });
+      return;
+    }
     const newLiked = !liked;
     setLiked(newLiked);
     onLike?.(newLiked);
   };
 
   const toggleBookmark = () => {
+    if (!isAuthenticated) {
+      toast({
+        title: "Authentication required",
+        description: "Please sign in to save posts",
+        action: (
+          <Button size="sm" onClick={() => navigate("/auth")}>
+            Sign In
+          </Button>
+        ),
+      });
+      return;
+    }
     const newBookmarked = !bookmarked;
     setBookmarked(newBookmarked);
     onBookmark?.(newBookmarked);
