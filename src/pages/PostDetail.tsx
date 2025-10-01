@@ -1,40 +1,67 @@
+"use client";
+
 import { useParams } from "react-router-dom";
 import { useEffect, useState } from "react";
 import { getPostBySlug } from "@/lib/getPostBySlug";
-import { getPosts, type Post } from "@/lib/getPosts";
-import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
-import { Clock, Eye, Heart, User, Share2, Bookmark, Facebook, Twitter, Linkedin } from "lucide-react";
-import { Card, CardContent } from "@/components/ui/card";
+import { getPosts } from "@/lib/getPosts";
 import PostCard from "@/components/PostCard";
+import DOMPurify from "dompurify";
+import ShareButtons from "@/components/ShareButtons";
+import PostActions from "@/components/PostActions";
+import AuthorCard from "@/components/AuthorCard";
+import LoaderSkeleton from "@/components/LoaderSkeleton";
+import SEO from "@/components/SEO";
+import PostMeta from "@/components/PostMeta";
+import PostCategories from "@/components/PostCategories";
+import Comments from "@/components/Comments";
+
+import { auth, db } from "@/lib/firebaseConfig";
+import { onAuthStateChanged } from "firebase/auth";
+import { doc, updateDoc, increment, onSnapshot } from "firebase/firestore";
+import { toggleLike } from "@/lib/updatePostStats";
+
 const PostDetail = () => {
   const { slug } = useParams();
-  const [post, setPost] = useState<Post | null>(null);
-  const [relatedPosts, setRelatedPosts] = useState<Post[]>([]);
+  const [post, setPost] = useState(null);
+  const [relatedPosts, setRelatedPosts] = useState([]);
   const [loading, setLoading] = useState(true);
   const [liked, setLiked] = useState(false);
+  const [likes, setLikes] = useState(0);
   const [bookmarked, setBookmarked] = useState(false);
+  const [user, setUser] = useState(null);
 
+  // Auth listener
+  useEffect(() => {
+    const unsubscribe = onAuthStateChanged(auth, (firebaseUser) => {
+      setUser(firebaseUser);
+    });
+    return unsubscribe;
+  }, []);
+
+  // Fetch post & related posts
   useEffect(() => {
     const fetchPost = async () => {
       if (!slug) return;
-      
       try {
         const [postData, allPosts] = await Promise.all([
           getPostBySlug(slug),
-          getPosts()
+          getPosts(),
         ]);
-        
+        if (!postData) return;
+
         setPost(postData);
-        
-        if (postData) {
-          const related = allPosts
-            .filter(p => p.id !== postData.id && p.categories.some(cat => postData.categories.includes(cat)))
-            .slice(0, 3);
-          setRelatedPosts(related);
-        }
-      } catch (error) {
-        console.error("Error fetching post:", error);
+        setLikes(postData.likes || 0);
+
+        const related = allPosts
+          .filter(
+            (p) =>
+              p.id !== postData.id &&
+              p.categories.some((cat) => postData.categories.includes(cat))
+          )
+          .slice(0, 3);
+        setRelatedPosts(related);
+      } catch (err) {
+        console.error("Error fetching post:", err);
       } finally {
         setLoading(false);
       }
@@ -43,196 +70,173 @@ const PostDetail = () => {
     fetchPost();
   }, [slug]);
 
-  if (loading) {
-    return (
-      <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-        <div className="animate-pulse">
-          <div className="h-8 bg-muted rounded w-3/4 mb-4"></div>
-          <div className="h-64 bg-muted rounded mb-6"></div>
-          <div className="space-y-3">
-            <div className="h-4 bg-muted rounded"></div>
-            <div className="h-4 bg-muted rounded w-5/6"></div>
-            <div className="h-4 bg-muted rounded w-4/6"></div>
-          </div>
-        </div>
-      </div>
-    );
-  }
+  // Increment views once per user & real-time updates
+  useEffect(() => {
+    if (!post?.id) return;
+
+    const viewedKey = `viewed-${post.id}`;
+    if (!localStorage.getItem(viewedKey)) {
+      const incrementViews = async () => {
+        try {
+          const postRef = doc(db, "posts", post.id);
+          await updateDoc(postRef, { views: increment(1) });
+        } catch (err) {
+          console.error("Error incrementing views:", err);
+        }
+      };
+      incrementViews();
+      localStorage.setItem(viewedKey, "true");
+    }
+
+    const postRef = doc(db, "posts", post.id);
+    const unsubscribe = onSnapshot(postRef, (docSnap) => {
+      if (docSnap.exists()) {
+        const data = docSnap.data();
+        setPost((prev) => (prev ? { ...prev, views: data?.views || 0 } : prev));
+      }
+    });
+
+    return () => unsubscribe();
+  }, [post?.id]);
+
+  if (loading) return <LoaderSkeleton />;
 
   if (!post) {
     return (
-      <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-        <div className="text-center">
-          <h1 className="font-poppins font-bold text-3xl text-heading mb-4">Post Not Found</h1>
-          <p className="font-lora text-muted-foreground">The article you're looking for doesn't exist.</p>
-        </div>
+      <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-12 text-center">
+        <h1 className="font-poppins font-bold text-2xl text-heading mb-4">
+          Post Not Found
+        </h1>
+        <p className="font-lora text-sm text-muted-foreground">
+          The article you're looking for doesn't exist.
+        </p>
       </div>
     );
   }
 
-
-  const formatDate = (date: Date) => {
-    return date.toLocaleDateString('en-US', { 
-      year: 'numeric', 
-      month: 'long', 
-      day: 'numeric' 
+  const formatDate = (date) =>
+    new Date(date).toLocaleDateString("en-US", {
+      year: "numeric",
+      month: "long",
+      day: "numeric",
     });
+
+  const handleLike = async () => {
+    if (!post?.id || !user) return alert("Please login to like posts.");
+    setLiked((prev) => !prev);
+    setLikes((prev) => (liked ? prev - 1 : prev + 1));
+    try {
+      await toggleLike(post.id, user.uid, liked);
+    } catch (err) {
+      console.error("Error toggling like:", err);
+    }
+  };
+
+  const handleBookmark = () => {
+    if (!user) return alert("Please login to bookmark posts.");
+    setBookmarked((prev) => !prev);
   };
 
   return (
     <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+      <SEO
+        title={post.seoTitle || post.title}
+        description={post.seoDescription || post.excerpt}
+        keywords={post.seoKeywords || post.tags?.join(", ")}
+        url={`${window.location.origin}/${post.slug}`}
+        image={post.featuredImage}
+      />
+
       <article className="max-w-4xl mx-auto">
-        {/* Article Header */}
+        {/* Categories + Title */}
         <div className="mb-8">
-          <div className="flex flex-wrap gap-2 mb-4">
-            {post.categories.map((category) => (
-              <Badge key={category} variant="secondary">
-                {category}
-              </Badge>
-            ))}
-          </div>
-          
-          <h1 className="font-poppins font-bold text-3xl md:text-4xl lg:text-5xl leading-tight mb-6 text-heading">
+          <PostCategories categories={post.categories} />
+          <h1 className="font-poppins font-bold text-2xl md:text-3xl leading-snug mb-4 text-heading">
             {post.title}
           </h1>
-          
-          <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4 text-sm text-muted-foreground">
-            <div className="flex items-center gap-4">
-              <div className="flex items-center gap-2">
-                <User className="w-4 h-4" />
-                <span className="font-poppins font-medium">{post.authorName}</span>
-              </div>
-              <div className="flex items-center gap-2">
-                <Clock className="w-4 h-4" />
-                <span>{formatDate(post.publishedAt)}</span>
-              </div>
-            </div>
-            
-            <div className="flex items-center gap-4">
-              <div className="flex items-center gap-2">
-                <Eye className="w-4 h-4" />
-                <span>{post.views} views</span>
-              </div>
-              <div className="flex items-center gap-2">
-                <Heart className="w-4 h-4" />
-                <span>{post.likes} likes</span>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        {/* Featured Image */}
-        <div className="mb-8">
-          <img 
-            src={post.featuredImage}
-            alt={post.title}
-            className="w-full h-64 md:h-96 object-cover rounded-2xl shadow-warm"
+          <PostMeta
+            author={post.authorName}
+            date={formatDate(post.publishedAt)}
+            views={post.views}
+            likes={likes}
           />
         </div>
 
-        {/* Article Content */}
-        <div className="prose prose-lg max-w-none mb-8">
-          <div className="font-lora text-lg leading-relaxed text-content">
-            <p className="text-xl font-medium mb-6 text-muted-foreground">
-              {post.excerpt}
-            </p>
-            
-            <div 
-              className="space-y-6"
-              dangerouslySetInnerHTML={{ __html: post.content }}
+        {/* Featured Image */}
+        {post.featuredImage && (
+          <div className="mb-6">
+            <img
+              src={post.featuredImage}
+              alt={post.title}
+              loading="eager"
+              className="w-full h-56 md:h-80 object-cover rounded-xl shadow-md"
             />
           </div>
+        )}
+
+        {/* Content */}
+        <div className="prose max-w-none mb-6 font-lora text-base leading-relaxed text-content">
+          <p className="text-base font-medium mb-4 text-muted-foreground">
+            {post.excerpt}
+          </p>
+          <div
+            className="space-y-4"
+            dangerouslySetInnerHTML={{
+              __html: DOMPurify.sanitize(post.content),
+            }}
+          />
         </div>
 
-        {/* Article Actions */}
-        <div className="flex flex-wrap items-center justify-between gap-4 py-6 border-t border-border">
-          <div className="flex items-center gap-2">
-            <Button
-              variant={liked ? "default" : "outline"}
-              size="sm"
-              onClick={() => setLiked(!liked)}
-              className={liked ? "bg-red-500 hover:bg-red-600" : ""}
-            >
-              <Heart className="w-4 h-4 mr-2" />
-              {liked ? "Liked" : "Like"}
-            </Button>
-            
-            <Button
-              variant={bookmarked ? "default" : "outline"}
-              size="sm"
-              onClick={() => setBookmarked(!bookmarked)}
-            >
-              <Bookmark className="w-4 h-4 mr-2" />
-              {bookmarked ? "Saved" : "Save"}
-            </Button>
-          </div>
-          
-          <div className="flex items-center gap-2">
-            <span className="font-poppins text-sm text-muted-foreground mr-2">Share:</span>
-            <Button size="sm" variant="outline" className="p-2">
-              <Facebook className="w-4 h-4" />
-            </Button>
-            <Button size="sm" variant="outline" className="p-2">
-              <Twitter className="w-4 h-4" />
-            </Button>
-            <Button size="sm" variant="outline" className="p-2">
-              <Linkedin className="w-4 h-4" />
-            </Button>
-            <Button size="sm" variant="outline" className="p-2">
-              <Share2 className="w-4 h-4" />
-            </Button>
-          </div>
+        {/* Actions */}
+        <div className="flex flex-wrap items-center justify-between gap-3 py-4 border-t border-border">
+          <PostActions
+            initialLiked={liked}
+            initialBookmarked={bookmarked}
+            onLike={handleLike}
+            onBookmark={handleBookmark}
+          />
+          <ShareButtons
+            url={`${window.location.origin}/${post.slug}`}
+            title={post.title}
+            text={`Check out this article: ${post.title}`}
+          />
         </div>
 
-        {/* Author Bio */}
-    <Card className="my-12 rounded-2xl shadow-lg border border-border/50 bg-gradient-to-br from-white to-muted/30 dark:from-background dark:to-muted/10">
-          <CardContent className="p-8">
-            <div className="flex flex-col sm:flex-row items-center sm:items-start gap-6 text-center sm:text-left">
-              <img
-                src={post.authorProfilePic || "/api/placeholder/120/120"}
-                alt={post.authorName}
-                className="w-24 h-24 rounded-full object-cover border-4 border-white shadow-md"
-              />
+        {/* Author */}
+        <AuthorCard
+          name={post.authorName}
+          about={post.authorAbout}
+          avatar={post.authorProfilePic}
+        />
 
-              <div className="flex-1">
-                <h3 className="font-poppins font-bold text-xl text-heading mb-1">
-                  {post.authorName}
-                </h3>
-                <span className="text-sm text-muted-foreground block mb-3">
-                  Contributor & Cultural Curator
-                </span>
-                <p className="font-lora text-content text-base mb-6 leading-relaxed">
-                  {post.authorAbout ||
-                    "Passionate writer and cultural curator documenting Kenya's vibrant creative scene."}
-                </p>
-
-                <div className="flex flex-wrap justify-center sm:justify-start gap-3">
-                  <Button
-                    variant="default"
-                    size="sm"
-                    className="px-5 py-2 rounded-full"
-                  >
-                    Follow Author
-                  </Button>
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    className="px-5 py-2 rounded-full"
-                  >
-                    View Profile
-                  </Button>
-                </div>
-              </div>
-            </div>
-          </CardContent>
-        </Card>
+        {/* Comments */}
+        {user ? (
+          <Comments
+            postId={post.id}
+            currentUser={{
+              id: user.uid,
+              name: user.displayName || "Anonymous",
+              avatar: user.photoURL || "https://i.pravatar.cc/100?u=anon",
+            }}
+          />
+        ) : (
+          <p className="text-sm text-muted-foreground mt-6">
+            Please{" "}
+            <a href="/login" className="text-primary font-medium">
+              login
+            </a>{" "}
+            to write a comment.
+          </p>
+        )}
       </article>
 
       {/* Related Posts */}
       {relatedPosts.length > 0 && (
-        <section className="mt-16">
-          <h2 className="font-poppins font-bold text-2xl text-heading mb-8">Related Articles</h2>
-          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+        <section className="mt-10">
+          <h2 className="font-poppins font-bold text-lg text-heading mb-6">
+            Related Articles
+          </h2>
+          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
             {relatedPosts.map((relatedPost) => (
               <PostCard key={relatedPost.id} post={relatedPost} />
             ))}

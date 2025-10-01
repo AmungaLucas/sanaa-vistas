@@ -18,10 +18,10 @@ const Sidebar = () => {
       try {
         const [trending, cats] = await Promise.all([
           getTrendingPosts(),
-          getCategories()
+          getCategories(),
         ]);
         setTrendingPosts(trending);
-        
+
         // Use Firebase categories if available, otherwise keep fallback
         if (cats.length > 0) {
           setCategories(cats);
@@ -51,11 +51,15 @@ const Sidebar = () => {
         <CardContent>
           <div className="flex flex-wrap gap-2">
             {categories.map((category) => (
-              <Badge 
-                key={category} 
-                variant="outline" 
+              <Badge
+                key={category}
+                variant="outline"
                 className="cursor-pointer hover:bg-primary hover:text-primary-foreground transition-colors"
-                onClick={() => window.location.href = `/categories?category=${encodeURIComponent(category)}`}
+                onClick={() =>
+                  (window.location.href = `/categories?category=${encodeURIComponent(
+                    category
+                  )}`)
+                }
               >
                 {category}
               </Badge>
@@ -94,23 +98,29 @@ const Sidebar = () => {
       {/* Author Bio */}
       <Card className="feature-card">
         <CardHeader>
-          <CardTitle className="text-heading text-lg">About the Author</CardTitle>
+          <CardTitle className="text-heading text-lg">
+            About the Author
+          </CardTitle>
         </CardHeader>
         <CardContent>
           <div className="flex items-center gap-4 mb-4">
-            <img 
-              src="/api/placeholder/80/80" 
+            <img
+              src="/sharon.webp"
               alt="Author Avatar"
               className="w-16 h-16 rounded-full object-cover"
             />
             <div>
-              <h3 className="font-poppins font-semibold">Amina Wanjiku</h3>
-              <p className="text-sm text-muted-foreground">Cultural Curator</p>
+              <h3 className="font-poppins font-semibold">Sharon Agigi</h3>
+              <p className="text-sm text-muted-foreground">Writer and author</p>
             </div>
           </div>
           <p className="text-content text-sm text-muted-foreground mb-4">
-            Passionate about documenting and celebrating Kenya's rich artistic heritage, 
-            connecting traditional crafts with contemporary creative expression.
+            Sharon is a writer and editor with a deep love for art and
+            creativity in all its forms. Drawn to the culturally rich and the
+            artistically unique, she finds inspiration in the stories,
+            expressions, and innovations that shape the creative world. Her
+            passion fuels not just her work, but her everyday life, as she seeks
+            to spark the same appreciation for art and culture in others.
           </p>
           <div className="flex gap-2">
             <Button size="sm" variant="outline" className="p-2">
@@ -136,10 +146,11 @@ const Sidebar = () => {
         </CardHeader>
         <CardContent>
           <p className="text-content text-sm text-muted-foreground mb-4">
-            Get the latest articles about Kenya's art and culture delivered to your inbox.
+            Get the latest articles about Kenya's art and culture delivered to
+            your inbox.
           </p>
           <form onSubmit={handleNewsletterSubmit} className="space-y-3">
-            <Input 
+            <Input
               type="email"
               placeholder="Enter your email"
               value={email}
@@ -161,7 +172,9 @@ const Sidebar = () => {
           <div className="bg-muted rounded-lg h-48 flex items-center justify-center border-2 border-dashed border-border">
             <div className="text-center text-muted-foreground">
               <div className="text-xl mb-2">🎨</div>
-              <p className="font-poppins font-medium text-sm">Sponsored Content</p>
+              <p className="font-poppins font-medium text-sm">
+                Sponsored Content
+              </p>
               <p className="text-xs">Advertisement Space</p>
             </div>
           </div>

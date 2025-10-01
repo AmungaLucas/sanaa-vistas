@@ -4,14 +4,15 @@ import { getPosts, getCategories, type Post } from "@/lib/getPosts";
 import PostCard from "@/components/PostCard";
 import Sidebar from "@/components/Sidebar";
 import { Badge } from "@/components/ui/badge";
-import { 
-  Pagination, 
-  PaginationContent, 
-  PaginationItem, 
-  PaginationLink, 
-  PaginationNext, 
-  PaginationPrevious 
+import {
+  Pagination,
+  PaginationContent,
+  PaginationItem,
+  PaginationLink,
+  PaginationNext,
+  PaginationPrevious,
 } from "@/components/ui/pagination";
+import { Helmet } from "react-helmet-async"; // ✅ SEO
 
 const Categories = () => {
   const [searchParams] = useSearchParams();
@@ -27,7 +28,7 @@ const Categories = () => {
       try {
         const [allPosts, cats] = await Promise.all([
           getPosts(),
-          getCategories()
+          getCategories(),
         ]);
         setPosts(allPosts);
         setCategories(cats);
@@ -41,8 +42,8 @@ const Categories = () => {
     fetchData();
   }, []);
 
-  const filteredPosts = selectedCategory 
-    ? posts.filter(post => post.categories.includes(selectedCategory))
+  const filteredPosts = selectedCategory
+    ? posts.filter((post) => post.categories.includes(selectedCategory))
     : posts;
 
   // Reset pagination when category changes
@@ -52,7 +53,7 @@ const Categories = () => {
 
   const totalPages = Math.ceil(filteredPosts.length / postsPerPage);
   const paginatedPosts = filteredPosts.slice(
-    (currentPage - 1) * postsPerPage, 
+    (currentPage - 1) * postsPerPage,
     currentPage * postsPerPage
   );
 
@@ -64,8 +65,78 @@ const Categories = () => {
     );
   }
 
+  const baseUrl = "https://sanaathrumylens.co.ke";
+  const canonicalUrl = selectedCategory
+    ? `${baseUrl}/categories?category=${encodeURIComponent(selectedCategory)}`
+    : `${baseUrl}/categories`;
+
+  const pageTitle = selectedCategory
+    ? `Explore ${selectedCategory} Articles | Sanaa Thru' My Lens`
+    : "Explore All Categories | Sanaa Thru' My Lens";
+
+  const pageDescription = selectedCategory
+    ? `Discover insightful articles, stories, and perspectives about ${selectedCategory} on Sanaa Thru' My Lens.`
+    : "Browse all categories and explore articles on Kenyan art, culture, film, music, and more.";
+
   return (
     <div className="min-h-screen bg-background">
+      {/* ✅ SEO Helmet */}
+      <Helmet>
+        <title>{pageTitle}</title>
+        <meta name="description" content={pageDescription} />
+        <meta
+          name="keywords"
+          content={
+            selectedCategory
+              ? `${selectedCategory}, Kenya art, culture, Sanaa Thru' My Lens`
+              : "Kenya art, African culture, categories, blog, Sanaa Thru' My Lens"
+          }
+        />
+        <meta name="author" content="Sanaa Thru' My Lens" />
+        <link rel="canonical" href={canonicalUrl} />
+
+        {/* Open Graph */}
+        <meta property="og:title" content={pageTitle} />
+        <meta property="og:description" content={pageDescription} />
+        <meta property="og:type" content="website" />
+        <meta property="og:url" content={canonicalUrl} />
+        <meta
+          property="og:image"
+          content="https://sanaathrumylens.co.ke/og-categories.jpg"
+        />
+
+        {/* Twitter */}
+        <meta name="twitter:card" content="summary_large_image" />
+        <meta name="twitter:title" content={pageTitle} />
+        <meta name="twitter:description" content={pageDescription} />
+        <meta
+          name="twitter:image"
+          content="https://sanaathrumylens.co.ke/og-categories.jpg"
+        />
+
+        {/* JSON-LD Structured Data */}
+        <script type="application/ld+json">
+          {JSON.stringify({
+            "@context": "https://schema.org",
+            "@type": "CollectionPage",
+            name: pageTitle,
+            description: pageDescription,
+            url: canonicalUrl,
+            isPartOf: {
+              "@type": "WebSite",
+              name: "Sanaa Thru' My Lens",
+              url: baseUrl,
+            },
+            about: selectedCategory
+              ? {
+                  "@type": "Thing",
+                  name: selectedCategory,
+                }
+              : undefined,
+          })}
+        </script>
+      </Helmet>
+
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
         <div className="grid lg:grid-cols-3 gap-8">
           {/* Main Content Area */}
@@ -73,7 +144,9 @@ const Categories = () => {
             {/* Header */}
             <div className="mb-8">
               <h1 className="font-poppins font-bold text-3xl text-heading mb-4">
-                {selectedCategory ? `Category: ${selectedCategory}` : "All Categories"}
+                {selectedCategory
+                  ? `Category: ${selectedCategory}`
+                  : "All Categories"}
               </h1>
               <p className="text-content text-muted-foreground">
                 Explore our collection of articles organized by category
@@ -83,19 +156,25 @@ const Categories = () => {
             {/* Category Filter */}
             <div className="mb-8">
               <div className="flex flex-wrap gap-2">
-                <Badge 
+                <Badge
                   variant={!selectedCategory ? "default" : "outline"}
                   className="cursor-pointer hover:bg-primary hover:text-primary-foreground transition-colors"
-                  onClick={() => window.location.href = "/categories"}
+                  onClick={() => (window.location.href = "/categories")}
                 >
                   All
                 </Badge>
                 {categories.map((category) => (
-                  <Badge 
+                  <Badge
                     key={category}
-                    variant={selectedCategory === category ? "default" : "outline"}
+                    variant={
+                      selectedCategory === category ? "default" : "outline"
+                    }
                     className="cursor-pointer hover:bg-primary hover:text-primary-foreground transition-colors"
-                    onClick={() => window.location.href = `/categories?category=${encodeURIComponent(category)}`}
+                    onClick={() =>
+                      (window.location.href = `/categories?category=${encodeURIComponent(
+                        category
+                      )}`)
+                    }
                   >
                     {category}
                   </Badge>
@@ -112,7 +191,8 @@ const Categories = () => {
               ) : (
                 <div className="col-span-2 text-center py-12">
                   <p className="text-content text-muted-foreground">
-                    No posts found {selectedCategory && `in "${selectedCategory}"`}.
+                    No posts found{" "}
+                    {selectedCategory && `in "${selectedCategory}"`}.
                   </p>
                 </div>
               )}
@@ -125,22 +205,23 @@ const Categories = () => {
                   <PaginationContent>
                     {currentPage > 1 && (
                       <PaginationItem>
-                        <PaginationPrevious 
-                          href="#" 
+                        <PaginationPrevious
+                          href="#"
                           onClick={(e) => {
                             e.preventDefault();
                             setCurrentPage(currentPage - 1);
-                            window.scrollTo({ top: 0, behavior: 'smooth' });
+                            window.scrollTo({ top: 0, behavior: "smooth" });
                           }}
                         />
                       </PaginationItem>
                     )}
-                    
+
                     {Array.from({ length: totalPages }, (_, i) => i + 1)
-                      .filter(page => 
-                        page === 1 || 
-                        page === totalPages || 
-                        Math.abs(page - currentPage) <= 2
+                      .filter(
+                        (page) =>
+                          page === 1 ||
+                          page === totalPages ||
+                          Math.abs(page - currentPage) <= 2
                       )
                       .map((page, index, array) => (
                         <PaginationItem key={page}>
@@ -153,22 +234,22 @@ const Categories = () => {
                             onClick={(e) => {
                               e.preventDefault();
                               setCurrentPage(page);
-                              window.scrollTo({ top: 0, behavior: 'smooth' });
+                              window.scrollTo({ top: 0, behavior: "smooth" });
                             }}
                           >
                             {page}
                           </PaginationLink>
                         </PaginationItem>
                       ))}
-                    
+
                     {currentPage < totalPages && (
                       <PaginationItem>
-                        <PaginationNext 
-                          href="#" 
+                        <PaginationNext
+                          href="#"
                           onClick={(e) => {
                             e.preventDefault();
                             setCurrentPage(currentPage + 1);
-                            window.scrollTo({ top: 0, behavior: 'smooth' });
+                            window.scrollTo({ top: 0, behavior: "smooth" });
                           }}
                         />
                       </PaginationItem>

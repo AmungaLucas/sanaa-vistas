@@ -1,4 +1,12 @@
-import { Facebook, Twitter, Instagram, Youtube, Mail, Phone, MapPin } from "lucide-react";
+import {
+  Facebook,
+  Twitter,
+  Instagram,
+  Youtube,
+  Mail,
+  Phone,
+  MapPin,
+} from "lucide-react";
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 
@@ -11,27 +19,46 @@ const Footer = () => {
           <div className="lg:col-span-2">
             <div className="flex items-center space-x-2 mb-4">
               <div className="w-10 h-10 bg-accent-gradient rounded-lg flex items-center justify-center">
-                <span className="text-accent-foreground font-poppins font-bold text-xl">S</span>
+                <span className="text-accent-foreground font-poppins font-bold text-xl">
+                  S
+                </span>
               </div>
               <span className="font-poppins font-bold text-2xl">
                 Sanaa Thru' My Lens
               </span>
             </div>
             <p className="text-primary-foreground/80 font-lora leading-relaxed mb-6 max-w-md">
-              Exploring Kenya's vibrant art and creative culture through authentic stories, 
-              emerging artists, and the rich tapestry of our cultural heritage.
+              Exploring Kenya's vibrant art and creative culture through
+              authentic stories, emerging artists, and the rich tapestry of our
+              cultural heritage.
             </p>
             <div className="flex gap-3">
-              <Button size="sm" variant="outline" className="p-2 border-primary-foreground/30 text-primary-foreground hover:bg-primary-foreground hover:text-earth-brown">
+              <Button
+                size="sm"
+                variant="outline"
+                className="p-2 border-primary-foreground/30 text-primary-foreground hover:bg-primary-foreground hover:text-earth-brown"
+              >
                 <Facebook className="w-4 h-4" />
               </Button>
-              <Button size="sm" variant="outline" className="p-2 border-primary-foreground/30 text-primary-foreground hover:bg-primary-foreground hover:text-earth-brown">
+              <Button
+                size="sm"
+                variant="outline"
+                className="p-2 border-primary-foreground/30 text-primary-foreground hover:bg-primary-foreground hover:text-earth-brown"
+              >
                 <Twitter className="w-4 h-4" />
               </Button>
-              <Button size="sm" variant="outline" className="p-2 border-primary-foreground/30 text-primary-foreground hover:bg-primary-foreground hover:text-earth-brown">
+              <Button
+                size="sm"
+                variant="outline"
+                className="p-2 border-primary-foreground/30 text-primary-foreground hover:bg-primary-foreground hover:text-earth-brown"
+              >
                 <Instagram className="w-4 h-4" />
               </Button>
-              <Button size="sm" variant="outline" className="p-2 border-primary-foreground/30 text-primary-foreground hover:bg-primary-foreground hover:text-earth-brown">
+              <Button
+                size="sm"
+                variant="outline"
+                className="p-2 border-primary-foreground/30 text-primary-foreground hover:bg-primary-foreground hover:text-earth-brown"
+              >
                 <Youtube className="w-4 h-4" />
               </Button>
             </div>
@@ -39,7 +66,9 @@ const Footer = () => {
 
           {/* Quick Links */}
           <div>
-            <h3 className="font-poppins font-semibold text-lg mb-4">Quick Links</h3>
+            <h3 className="font-poppins font-semibold text-lg mb-4">
+              Quick Links
+            </h3>
             <nav className="space-y-2">
               {[
                 { name: "Home", href: "/" },
@@ -47,7 +76,7 @@ const Footer = () => {
                 { name: "About Us", href: "/about" },
                 { name: "Contact", href: "/contact" },
                 { name: "Privacy Policy", href: "/privacy" },
-                { name: "Terms of Service", href: "/terms" }
+                { name: "Terms of Service", href: "/terms" },
               ].map((link) => (
                 <Link
                   key={link.name}
@@ -62,19 +91,27 @@ const Footer = () => {
 
           {/* Contact Info */}
           <div>
-            <h3 className="font-poppins font-semibold text-lg mb-4">Get in Touch</h3>
+            <h3 className="font-poppins font-semibold text-lg mb-4">
+              Get in Touch
+            </h3>
             <div className="space-y-3">
               <div className="flex items-center gap-3">
                 <Mail className="w-4 h-4 text-primary-foreground/60" />
-                <span className="text-primary-foreground/80 font-lora">hello@sanaathrumylens.com</span>
+                <span className="text-primary-foreground/80 font-lora">
+                  info@sanaathrumylens.com
+                </span>
               </div>
               <div className="flex items-center gap-3">
                 <Phone className="w-4 h-4 text-primary-foreground/60" />
-                <span className="text-primary-foreground/80 font-lora">+254 700 123 456</span>
+                <span className="text-primary-foreground/80 font-lora">
+                  +254 720 649 974
+                </span>
               </div>
               <div className="flex items-center gap-3">
                 <MapPin className="w-4 h-4 text-primary-foreground/60" />
-                <span className="text-primary-foreground/80 font-lora">Nairobi, Kenya</span>
+                <span className="text-primary-foreground/80 font-lora">
+                  Nairobi, Kenya
+                </span>
               </div>
             </div>
           </div>
@@ -85,7 +122,7 @@ const Footer = () => {
             © 2024 Sanaa Thru' My Lens. All rights reserved.
           </p>
           <p className="text-primary-foreground/60 font-lora text-sm mt-2 md:mt-0">
-            Made with ❤️ in Kenya
+            Billuc Solutions
           </p>
         </div>
       </div>
