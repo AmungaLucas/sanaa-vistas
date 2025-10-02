@@ -5,29 +5,45 @@ import {
   orderBy,
   serverTimestamp,
   onSnapshot,
+  doc,
+  setDoc,
+  getDoc,
 } from "firebase/firestore";
 
 import { db } from "@/lib/firebaseConfig";
 
 // Add a new comment
 export const addComment = async (
-  postId,
-  userId,
-  userName,
-  userAvatar,
-  content
+  postId: string,
+  userId: string,
+  userName: string,
+  userAvatar: string | undefined,
+  content: string
 ) => {
   try {
+    // Ensure post document exists before adding comment
+    const postRef = doc(db, "posts", postId);
+    const postSnap = await getDoc(postRef);
+    
+    if (!postSnap.exists()) {
+      // Create minimal post document if it doesn't exist
+      await setDoc(postRef, {
+        id: postId,
+        createdAt: serverTimestamp(),
+      });
+    }
+
     const commentsRef = collection(db, "posts", postId, "comments");
     const newComment = {
       userId,
       userName,
-      userAvatar,
+      userAvatar: userAvatar || "",
       content,
       createdAt: serverTimestamp(),
     };
 
     await addDoc(commentsRef, newComment);
+    console.log("Comment added successfully:", newComment);
 
     return { success: true };
   } catch (err) {
@@ -37,7 +53,7 @@ export const addComment = async (
 };
 
 // Real-time listener for comments
-export const listenToComments = (postId, callback) => {
+export const listenToComments = (postId: string, callback: (comments: any[]) => void) => {
   try {
     const commentsRef = collection(db, "posts", postId, "comments");
     const q = query(commentsRef, orderBy("createdAt", "desc"));
@@ -47,6 +63,7 @@ export const listenToComments = (postId, callback) => {
         id: doc.id,
         ...doc.data(),
       }));
+      console.log("Comments fetched:", comments.length);
       callback(comments);
     });
   } catch (err) {
