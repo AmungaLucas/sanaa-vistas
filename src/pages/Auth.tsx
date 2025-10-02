@@ -39,18 +39,21 @@ const Auth = () => {
         const userCredential = await createUserWithEmailAndPassword(auth, email, password);
         const user = userCredential.user;
         
+        const finalUsername = username.trim() || email.split('@')[0];
+        const finalDisplayName = username.trim() ? username.trim() : email.split('@')[0];
+        
         // Update display name
         await updateProfile(user, {
-          displayName: username || email.split('@')[0],
+          displayName: finalDisplayName,
         });
 
         // Create user profile in Firestore
         await createUserProfile(
           user.uid,
           email,
-          username || email.split('@')[0],
+          finalDisplayName,
           user.photoURL || undefined,
-          username
+          finalUsername
         );
 
         toast({
@@ -80,12 +83,15 @@ const Auth = () => {
       // Check if user profile exists, if not create one
       const existingProfile = await getUserProfile(user.uid);
       if (!existingProfile) {
+        const displayName = user.displayName || user.email?.split('@')[0] || "User";
+        const username = user.email?.split('@')[0] || "user";
+        
         await createUserProfile(
           user.uid,
           user.email || "",
-          user.displayName || user.email?.split('@')[0] || "User",
+          displayName,
           user.photoURL || undefined,
-          user.displayName || user.email?.split('@')[0]
+          username
         );
       }
 

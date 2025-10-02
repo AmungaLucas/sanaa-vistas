@@ -1,4 +1,4 @@
-import { Search, Menu, X, User, LogOut } from "lucide-react";
+import { Search, Menu, X, LogOut } from "lucide-react";
 import { useState, useEffect } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
@@ -11,17 +11,31 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import UserAvatar from "@/components/UserAvatar";
+import { getUserProfile, UserProfile } from "@/lib/userProfile";
 
 const Navbar = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
   const [user, setUser] = useState(null);
+  const [userProfile, setUserProfile] = useState<UserProfile | null>(null);
   const location = useLocation();
   const navigate = useNavigate();
 
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, (firebaseUser) => {
       setUser(firebaseUser);
+      
+      // Fetch user profile when user changes
+      if (firebaseUser) {
+        setTimeout(() => {
+          getUserProfile(firebaseUser.uid).then(profile => {
+            setUserProfile(profile);
+          });
+        }, 0);
+      } else {
+        setUserProfile(null);
+      }
     });
     return unsubscribe;
   }, []);
@@ -92,20 +106,16 @@ const Navbar = () => {
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
                   <Button variant="ghost" size="icon">
-                    {user.photoURL ? (
-                      <img
-                        src={user.photoURL}
-                        alt="Profile"
-                        className="w-8 h-8 rounded-full object-cover"
-                      />
-                    ) : (
-                      <User className="w-5 h-5" />
-                    )}
+                    <UserAvatar
+                      photoURL={user.photoURL}
+                      displayName={userProfile?.username || user.displayName}
+                      size="sm"
+                    />
                   </Button>
                 </DropdownMenuTrigger>
                 <DropdownMenuContent align="end">
                   <DropdownMenuItem className="font-poppins">
-                    {user.displayName || user.email}
+                    {userProfile?.username || user.displayName || user.email}
                   </DropdownMenuItem>
                   <DropdownMenuItem onClick={handleSignOut} className="font-poppins text-destructive">
                     <LogOut className="w-4 h-4 mr-2" />
@@ -163,9 +173,16 @@ const Navbar = () => {
             <div className="pt-4 border-t border-border">
               {user ? (
                 <div className="space-y-2 px-4">
-                  <p className="text-sm text-muted-foreground font-poppins">
-                    {user.displayName || user.email}
-                  </p>
+                  <div className="flex items-center gap-2">
+                    <UserAvatar
+                      photoURL={user.photoURL}
+                      displayName={userProfile?.username || user.displayName}
+                      size="sm"
+                    />
+                    <p className="text-sm text-muted-foreground font-poppins">
+                      {userProfile?.username || user.displayName || user.email}
+                    </p>
+                  </div>
                   <Button
                     onClick={handleSignOut}
                     variant="destructive"

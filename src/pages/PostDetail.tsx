@@ -17,6 +17,7 @@ import { auth, db } from "@/lib/firebaseConfig";
 import { onAuthStateChanged } from "firebase/auth";
 import { doc, updateDoc, increment, onSnapshot, getDoc } from "firebase/firestore";
 import { toggleLike, toggleBookmark } from "@/lib/updatePostStats";
+import { getUserProfile, UserProfile } from "@/lib/userProfile";
 
 const PostDetail = () => {
   const { slug } = useParams();
@@ -27,11 +28,23 @@ const PostDetail = () => {
   const [likes, setLikes] = useState(0);
   const [bookmarked, setBookmarked] = useState(false);
   const [user, setUser] = useState(null);
+  const [userProfile, setUserProfile] = useState<UserProfile | null>(null);
 
   // Auth listener
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, (firebaseUser) => {
       setUser(firebaseUser);
+      
+      // Fetch user profile
+      if (firebaseUser) {
+        setTimeout(() => {
+          getUserProfile(firebaseUser.uid).then(profile => {
+            setUserProfile(profile);
+          });
+        }, 0);
+      } else {
+        setUserProfile(null);
+      }
     });
     return unsubscribe;
   }, []);
@@ -222,8 +235,8 @@ const PostDetail = () => {
             user
               ? {
                   id: user.uid,
-                  name: user.displayName || "Anonymous",
-                  avatar: user.photoURL || "https://i.pravatar.cc/100?u=anon",
+                  name: userProfile?.username || user.displayName || "Anonymous",
+                  avatar: user.photoURL || undefined,
                 }
               : null
           }
