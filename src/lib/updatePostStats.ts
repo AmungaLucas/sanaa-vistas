@@ -5,21 +5,37 @@ import {
   increment,
   arrayUnion,
   arrayRemove,
+  setDoc,
+  getDoc,
 } from "firebase/firestore";
 import { db } from "@/lib/firebaseConfig";
+
+// Helper function to ensure document exists
+const ensureDocExists = async (docRef: any, initialData: any) => {
+  const docSnap = await getDoc(docRef);
+  if (!docSnap.exists()) {
+    await setDoc(docRef, initialData);
+  }
+};
 
 // Increment views count
 export const incrementViews = async (postId: string) => {
   try {
-    console.log("incrementViews called for postId:", postId); // debug
+    console.log("incrementViews called for postId:", postId);
 
     const postRef = doc(db, "posts", postId);
+    await ensureDocExists(postRef, {
+      id: postId,
+      views: 0,
+      likes: 0,
+      likedBy: [],
+    });
 
     await updateDoc(postRef, {
       views: increment(1),
     });
 
-    console.log("Views incremented successfully for postId:", postId); // debug
+    console.log("Views incremented successfully for postId:", postId);
     return { success: true };
   } catch (err) {
     console.error("Error incrementing views:", err);
@@ -37,6 +53,14 @@ export const toggleLike = async (
     console.log("toggleLike called:", { postId, userId, liked });
 
     const postRef = doc(db, "posts", postId);
+    
+    // Ensure post document exists
+    await ensureDocExists(postRef, {
+      id: postId,
+      views: 0,
+      likes: 0,
+      likedBy: [],
+    });
 
     if (liked) {
       await updateDoc(postRef, {
@@ -68,6 +92,12 @@ export const toggleBookmark = async (
     console.log("toggleBookmark called:", { postId, userId, bookmarked });
 
     const userRef = doc(db, "users", userId);
+    
+    // Ensure user document exists with bookmarks field
+    await ensureDocExists(userRef, {
+      uid: userId,
+      bookmarks: [],
+    });
 
     if (bookmarked) {
       await updateDoc(userRef, {
