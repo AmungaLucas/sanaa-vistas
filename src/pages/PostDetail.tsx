@@ -15,7 +15,7 @@ import RelatedPosts from "@/components/post/RelatedPosts";
 
 import { auth, db } from "@/lib/firebaseConfig";
 import { onAuthStateChanged } from "firebase/auth";
-import { doc, updateDoc, increment, onSnapshot } from "firebase/firestore";
+import { doc, updateDoc, increment, onSnapshot, getDoc } from "firebase/firestore";
 import { toggleLike, toggleBookmark } from "@/lib/updatePostStats";
 
 const PostDetail = () => {
@@ -68,6 +68,37 @@ const PostDetail = () => {
     fetchPost();
   }, [slug]);
 
+  // Fetch liked and bookmarked state from DB
+  useEffect(() => {
+    const fetchUserInteractions = async () => {
+      if (!post?.id || !user) return;
+
+      try {
+        const postRef = doc(db, "posts", post.id);
+        const postSnap = await getDoc(postRef);
+        
+        if (postSnap.exists()) {
+          const postData = postSnap.data();
+          const likedBy = postData.likedBy || [];
+          setLiked(likedBy.includes(user.uid));
+        }
+
+        const userRef = doc(db, "users", user.uid);
+        const userSnap = await getDoc(userRef);
+        
+        if (userSnap.exists()) {
+          const userData = userSnap.data();
+          const bookmarks = userData.bookmarks || [];
+          setBookmarked(bookmarks.includes(post.id));
+        }
+      } catch (err) {
+        console.error("Error fetching user interactions:", err);
+      }
+    };
+
+    fetchUserInteractions();
+  }, [post?.id, user]);
+
   // Increment views once per user & real-time updates
   useEffect(() => {
     if (!post?.id) return;
@@ -91,6 +122,7 @@ const PostDetail = () => {
       if (docSnap.exists()) {
         const data = docSnap.data();
         setPost((prev) => (prev ? { ...prev, views: data?.views || 0 } : prev));
+        setLikes(data?.likes || 0);
       }
     });
 

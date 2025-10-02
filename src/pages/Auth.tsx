@@ -6,17 +6,20 @@ import {
   createUserWithEmailAndPassword,
   GoogleAuthProvider,
   signInWithPopup,
+  updateProfile,
 } from "firebase/auth";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { useToast } from "@/hooks/use-toast";
 import SEO from "@/components/SEO";
+import { createUserProfile, getUserProfile } from "@/lib/userProfile";
 
 const Auth = () => {
   const [isLogin, setIsLogin] = useState(true);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [username, setUsername] = useState("");
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
   const { toast } = useToast();
@@ -33,7 +36,23 @@ const Auth = () => {
           description: "You've successfully signed in.",
         });
       } else {
-        await createUserWithEmailAndPassword(auth, email, password);
+        const userCredential = await createUserWithEmailAndPassword(auth, email, password);
+        const user = userCredential.user;
+        
+        // Update display name
+        await updateProfile(user, {
+          displayName: username || email.split('@')[0],
+        });
+
+        // Create user profile in Firestore
+        await createUserProfile(
+          user.uid,
+          email,
+          username || email.split('@')[0],
+          user.photoURL || undefined,
+          username
+        );
+
         toast({
           title: "Account created!",
           description: "Welcome to Sanaa Scope.",
@@ -55,7 +74,21 @@ const Auth = () => {
     setLoading(true);
     try {
       const provider = new GoogleAuthProvider();
-      await signInWithPopup(auth, provider);
+      const result = await signInWithPopup(auth, provider);
+      const user = result.user;
+
+      // Check if user profile exists, if not create one
+      const existingProfile = await getUserProfile(user.uid);
+      if (!existingProfile) {
+        await createUserProfile(
+          user.uid,
+          user.email || "",
+          user.displayName || user.email?.split('@')[0] || "User",
+          user.photoURL || undefined,
+          user.displayName || user.email?.split('@')[0]
+        );
+      }
+
       toast({
         title: "Success!",
         description: "Signed in with Google.",
@@ -100,6 +133,21 @@ const Auth = () => {
           </div>
 
           <form onSubmit={handleSubmit} className="space-y-4">
+            {!isLogin && (
+              <div>
+                <Label htmlFor="username">Username</Label>
+                <Input
+                  id="username"
+                  type="text"
+                  placeholder="johndoe"
+                  value={username}
+                  onChange={(e) => setUsername(e.target.value)}
+                  required
+                  className="mt-1"
+                />
+              </div>
+            )}
+
             <div>
               <Label htmlFor="email">Email</Label>
               <Input
