@@ -8,6 +8,8 @@ import {
   doc,
   setDoc,
   getDoc,
+  deleteDoc,
+  updateDoc,
 } from "firebase/firestore";
 
 import { db } from "@/lib/firebaseConfig";
@@ -69,5 +71,34 @@ export const listenToComments = (postId: string, callback: (comments: any[]) => 
   } catch (err) {
     console.error("Error listening to comments:", err);
     return () => {};
+  }
+};
+
+// Delete a comment
+export const deleteComment = async (postId: string, commentId: string) => {
+  try {
+    const commentRef = doc(db, "posts", postId, "comments", commentId);
+    await deleteDoc(commentRef);
+    console.log("Comment deleted successfully");
+    return { success: true };
+  } catch (err) {
+    console.error("Error deleting comment:", err);
+    return { success: false, error: err };
+  }
+};
+
+// Edit a comment
+export const editComment = async (postId: string, commentId: string, newContent: string) => {
+  try {
+    const commentRef = doc(db, "posts", postId, "comments", commentId);
+    await updateDoc(commentRef, {
+      content: newContent,
+      editedAt: serverTimestamp(),
+    });
+    console.log("Comment updated successfully");
+    return { success: true };
+  } catch (err) {
+    console.error("Error editing comment:", err);
+    return { success: false, error: err };
   }
 };
