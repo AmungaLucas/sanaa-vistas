@@ -3,6 +3,7 @@ import { initializeApp } from "firebase/app";
 import { getFirestore } from "firebase/firestore";
 import { getAuth, GoogleAuthProvider } from "firebase/auth";
 
+// Firebase project config
 const firebaseConfig = {
   apiKey: "AIzaSyA0QF3CVy6r-WdQXws6tYRCog-zMoPMgFA",
   authDomain: "sanaa-254ke.firebaseapp.com",
@@ -12,7 +13,10 @@ const firebaseConfig = {
   appId: "1:198802223480:web:aef50044cda0152800d88d",
 };
 
+// Initialize Firebase app
 const app = initializeApp(firebaseConfig);
+
+// Export Firebase services
 export const db = getFirestore(app);
 export const auth = getAuth(app);
 export const googleProvider = new GoogleAuthProvider();

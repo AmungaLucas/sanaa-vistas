@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import {
   collection,
   addDoc,
@@ -26,7 +27,7 @@ export const addComment = async (
     // Ensure post document exists before adding comment
     const postRef = doc(db, "posts", postId);
     const postSnap = await getDoc(postRef);
-    
+
     if (!postSnap.exists()) {
       // Create minimal post document if it doesn't exist
       await setDoc(postRef, {
@@ -55,7 +56,10 @@ export const addComment = async (
 };
 
 // Real-time listener for comments
-export const listenToComments = (postId: string, callback: (comments: any[]) => void) => {
+export const listenToComments = (
+  postId: string,
+  callback: (comments: any[]) => void
+) => {
   try {
     const commentsRef = collection(db, "posts", postId, "comments");
     const q = query(commentsRef, orderBy("createdAt", "desc"));

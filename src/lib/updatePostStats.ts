@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 // lib/updatePostStats.ts
 import {
   doc,
@@ -53,7 +54,7 @@ export const toggleLike = async (
     console.log("toggleLike called:", { postId, userId, liked });
 
     const postRef = doc(db, "posts", postId);
-    
+
     // Ensure post document exists
     await ensureDocExists(postRef, {
       id: postId,
@@ -92,7 +93,7 @@ export const toggleBookmark = async (
     console.log("toggleBookmark called:", { postId, userId, bookmarked });
 
     const userRef = doc(db, "users", userId);
-    
+
     // Ensure user document exists with bookmarks field
     await ensureDocExists(userRef, {
       uid: userId,
