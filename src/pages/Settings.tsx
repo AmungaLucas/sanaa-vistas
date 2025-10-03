@@ -13,7 +13,13 @@ import { getUserProfile, createUserProfile } from "@/lib/userProfile";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
 import UserAvatar from "@/components/UserAvatar";
 import SEO from "@/components/SEO";
@@ -107,7 +113,7 @@ const Settings = () => {
     setLinkLoading(true);
     try {
       const result = await linkWithPopup(user, googleProvider);
-      
+
       // Update profile with Google info if available
       if (result.user.photoURL) {
         await updateProfile(user, {
@@ -202,7 +208,7 @@ const Settings = () => {
         url={`${window.location.origin}/settings`}
         image="/placeholder.svg"
       />
-      
+
       <div className="container max-w-4xl mx-auto py-12 px-4">
         <div className="mb-8">
           <h1 className="font-poppins font-bold text-4xl text-heading mb-2">
@@ -217,7 +223,9 @@ const Settings = () => {
           {/* Profile Information */}
           <Card>
             <CardHeader>
-              <CardTitle className="font-poppins">Profile Information</CardTitle>
+              <CardTitle className="font-poppins">
+                Profile Information
+              </CardTitle>
               <CardDescription>
                 Update your profile details and preferences
               </CardDescription>
@@ -230,8 +238,12 @@ const Settings = () => {
                   size="lg"
                 />
                 <div>
-                  <p className="font-semibold text-lg">{displayName || user.displayName}</p>
-                  <p className="text-sm text-muted-foreground">{email || user.email}</p>
+                  <p className="font-semibold text-lg">
+                    {displayName || user.displayName}
+                  </p>
+                  <p className="text-sm text-muted-foreground">
+                    {email || user.email}
+                  </p>
                 </div>
               </div>
 
@@ -298,7 +310,9 @@ const Settings = () => {
                     </div>
                     <div>
                       <p className="font-medium">Email & Password</p>
-                      <p className="text-sm text-muted-foreground">{user.email}</p>
+                      <p className="text-sm text-muted-foreground">
+                        {user.email}
+                      </p>
                     </div>
                   </div>
                   <span className="text-sm text-muted-foreground">Primary</span>
