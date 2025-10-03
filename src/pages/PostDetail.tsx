@@ -15,7 +15,7 @@ import RelatedPosts from "@/components/post/RelatedPosts";
 
 import { auth, db } from "@/lib/firebaseConfig";
 import { onAuthStateChanged } from "firebase/auth";
-import { doc, updateDoc, increment, onSnapshot, getDoc } from "firebase/firestore";
+import { doc, updateDoc, increment, onSnapshot, getDoc, setDoc } from "firebase/firestore";
 import { toggleLike, toggleBookmark } from "@/lib/updatePostStats";
 import { getUserProfile, UserProfile } from "@/lib/userProfile";
 
@@ -121,6 +121,10 @@ const PostDetail = () => {
       const incrementViews = async () => {
         try {
           const postRef = doc(db, "posts", post.id);
+          const snap = await getDoc(postRef);
+          if (!snap.exists()) {
+            await setDoc(postRef, { id: post.id, views: 0, likes: 0, likedBy: [] });
+          }
           await updateDoc(postRef, { views: increment(1) });
         } catch (err) {
           console.error("Error incrementing views:", err);

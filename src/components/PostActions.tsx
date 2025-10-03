@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Heart, Bookmark } from "lucide-react";
 import { useNavigate } from "react-router-dom";
@@ -21,6 +21,14 @@ const PostActions: React.FC<PostActionsProps> = ({
 }) => {
   const [liked, setLiked] = useState(initialLiked);
   const [bookmarked, setBookmarked] = useState(initialBookmarked);
+
+  useEffect(() => {
+    setLiked(initialLiked);
+  }, [initialLiked]);
+
+  useEffect(() => {
+    setBookmarked(initialBookmarked);
+  }, [initialBookmarked]);
   const navigate = useNavigate();
   const { toast } = useToast();
 

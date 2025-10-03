@@ -157,10 +157,10 @@ const Comments = ({ postId, currentUser }) => {
                     className="w-full border border-border rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-1 focus:ring-primary"
                   />
                   <div className="flex gap-2">
-                    <Button size="sm" onClick={() => handleSaveEdit(c.id)}>
+                    <Button size="sm" onClick={() => handleSaveEdit(c.id)} type="button">
                       Save
                     </Button>
-                    <Button size="sm" variant="outline" onClick={handleCancelEdit}>
+                    <Button size="sm" variant="outline" onClick={handleCancelEdit} type="button">
                       Cancel
                     </Button>
                   </div>
