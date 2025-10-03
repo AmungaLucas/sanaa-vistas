@@ -119,7 +119,7 @@ const Footer = () => {
 
         <div className="border-t border-primary-foreground/20 mt-8 pt-8 flex flex-col md:flex-row justify-between items-center">
           <p className="text-primary-foreground/60 font-lora text-sm">
-            © 2024 Sanaa Thru' My Lens. All rights reserved.
+            © 2025 Sanaa Thru' My Lens. All rights reserved.
           </p>
           <p className="text-primary-foreground/60 font-lora text-sm mt-2 md:mt-0">
             Billuc Solutions
