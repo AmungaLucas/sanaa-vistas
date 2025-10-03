@@ -14,6 +14,7 @@ import Contact from "./pages/Contact";
 import Categories from "./pages/Categories";
 import PostDetail from "./pages/PostDetail";
 import Auth from "./pages/Auth";
+import Settings from "./pages/Settings";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -39,6 +40,7 @@ const App = () => (
                 <Route path="/contact" element={<Contact />} />
                 <Route path="/categories" element={<Categories />} />
                 <Route path="/auth" element={<Auth />} />
+                <Route path="/settings" element={<Settings />} />
                 <Route path="/:slug" element={<PostDetail />} />
 
                 {/* Catch-all route */}

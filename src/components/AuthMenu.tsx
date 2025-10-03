@@ -4,9 +4,10 @@ import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
+  DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { LogOut } from "lucide-react";
+import { LogOut, Settings } from "lucide-react";
 import UserAvatar from "@/components/UserAvatar";
 import { UserProfile } from "@/lib/userProfile";
 
@@ -34,6 +35,13 @@ const AuthMenu = ({
       <DropdownMenuContent align="end">
         <DropdownMenuItem className="font-poppins">
           {userProfile?.username || user.displayName || user.email}
+        </DropdownMenuItem>
+        <DropdownMenuSeparator />
+        <DropdownMenuItem asChild className="font-poppins">
+          <Link to="/settings">
+            <Settings className="w-4 h-4 mr-2" />
+            Settings
+          </Link>
         </DropdownMenuItem>
         <DropdownMenuItem
           onClick={handleSignOut}
