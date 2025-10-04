@@ -3,6 +3,8 @@ import { getPosts, getFeaturedPosts, type Post } from "@/lib/getPosts";
 import Hero from "@/components/Hero";
 import PostCard from "@/components/PostCard";
 import Sidebar from "@/components/Sidebar";
+import AdSense from "@/components/AdSense";
+import { Card, CardContent } from "@/components/ui/card";
 import {
   Pagination,
   PaginationContent,
@@ -130,8 +132,22 @@ const Index = () => {
                         (currentPage - 1) * postsPerPage,
                         currentPage * postsPerPage
                       )
-                      .map((post) => (
-                        <PostCard key={post.id} post={post} />
+                      .map((post, index) => (
+                        <>
+                          <PostCard key={post.id} post={post} />
+                          {/* Ad after every 4th post */}
+                          {index === 3 && (
+                            <Card className="md:col-span-2">
+                              <CardContent className="p-6">
+                                <AdSense
+                                  adSlot="YOUR_AD_SLOT_4"
+                                  adFormat="horizontal"
+                                  className="min-h-[100px]"
+                                />
+                              </CardContent>
+                            </Card>
+                          )}
+                        </>
                       ))}
                   </div>
 

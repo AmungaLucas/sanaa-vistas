@@ -7,6 +7,7 @@ import { getTrendingPosts, getCategories, type Post } from "@/lib/getPosts";
 import { categories as fallbackCategories } from "@/data/mockPosts";
 import PostCard from "./PostCard";
 import SubscribeForm from "./SubscribeForm";
+import AdSense from "./AdSense";
 
 const Sidebar = () => {
   const [trendingPosts, setTrendingPosts] = useState<Post[]>([]);
@@ -60,16 +61,14 @@ const Sidebar = () => {
         </CardContent>
       </Card>
 
-      {/* Google Ads Placeholder */}
+      {/* Google Ads - Sidebar Top */}
       <Card className="feature-card">
         <CardContent className="p-6">
-          <div className="bg-muted rounded-lg h-64 flex items-center justify-center border-2 border-dashed border-border">
-            <div className="text-center text-muted-foreground">
-              <div className="text-2xl mb-2">📱</div>
-              <p className="font-poppins font-medium">Advertisement</p>
-              <p className="text-sm">Google Ads Placeholder</p>
-            </div>
-          </div>
+          <AdSense
+            adSlot="YOUR_AD_SLOT_1"
+            adFormat="auto"
+            className="min-h-[250px]"
+          />
         </CardContent>
       </Card>
 
@@ -134,18 +133,14 @@ const Sidebar = () => {
       {/* Newsletter Signup */}
       <SubscribeForm />
 
-      {/* Another Google Ads Placeholder */}
+      {/* Google Ads - Sidebar Bottom */}
       <Card className="feature-card">
         <CardContent className="p-6">
-          <div className="bg-muted rounded-lg h-48 flex items-center justify-center border-2 border-dashed border-border">
-            <div className="text-center text-muted-foreground">
-              <div className="text-xl mb-2">🎨</div>
-              <p className="font-poppins font-medium text-sm">
-                Sponsored Content
-              </p>
-              <p className="text-xs">Advertisement Space</p>
-            </div>
-          </div>
+          <AdSense
+            adSlot="YOUR_AD_SLOT_2"
+            adFormat="auto"
+            className="min-h-[200px]"
+          />
         </CardContent>
       </Card>
     </aside>

@@ -12,6 +12,8 @@ import PostHeader from "@/components/post/PostHeader";
 import PostContent from "@/components/post/PostContent";
 import PostFooter from "@/components/post/PostFooter";
 import RelatedPosts from "@/components/post/RelatedPosts";
+import AdSense from "@/components/AdSense";
+import { Card, CardContent } from "@/components/ui/card";
 
 import { auth, db } from "@/lib/firebaseConfig";
 import { onAuthStateChanged } from "firebase/auth";
@@ -215,6 +217,17 @@ const PostDetail = () => {
           excerpt={post.excerpt}
           content={post.content}
         />
+
+        {/* In-Article Ad */}
+        <Card className="my-8">
+          <CardContent className="p-6">
+            <AdSense
+              adSlot="YOUR_AD_SLOT_3"
+              adFormat="fluid"
+              adLayout="in-article"
+            />
+          </CardContent>
+        </Card>
 
         <PostFooter
           liked={liked}
