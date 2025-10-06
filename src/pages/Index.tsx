@@ -140,7 +140,7 @@ const Index = () => {
                             <Card className="md:col-span-2">
                               <CardContent className="p-6">
                                 <AdSense
-                                  adSlot="YOUR_AD_SLOT_4"
+                                  adSlot="5074357227"
                                   adFormat="horizontal"
                                   className="min-h-[100px]"
                                 />

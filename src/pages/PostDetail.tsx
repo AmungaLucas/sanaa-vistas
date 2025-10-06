@@ -222,7 +222,7 @@ const PostDetail = () => {
         <Card className="my-8">
           <CardContent className="p-6">
             <AdSense
-              adSlot="YOUR_AD_SLOT_3"
+              adSlot="5074357227"
               adFormat="fluid"
               adLayout="in-article"
             />

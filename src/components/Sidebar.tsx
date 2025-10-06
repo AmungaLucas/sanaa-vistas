@@ -65,7 +65,7 @@ const Sidebar = () => {
       <Card className="feature-card">
         <CardContent className="p-6">
           <AdSense
-            adSlot="YOUR_AD_SLOT_1"
+            adSlot="5074357227"
             adFormat="auto"
             className="min-h-[250px]"
           />
@@ -137,7 +137,7 @@ const Sidebar = () => {
       <Card className="feature-card">
         <CardContent className="p-6">
           <AdSense
-            adSlot="YOUR_AD_SLOT_2"
+            adSlot="5074357227"
             adFormat="auto"
             className="min-h-[200px]"
           />
