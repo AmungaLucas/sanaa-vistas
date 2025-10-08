@@ -8,6 +8,8 @@ import {
   arrayRemove,
   setDoc,
   getDoc,
+  deleteDoc,
+  serverTimestamp,
 } from "firebase/firestore";
 import { db } from "@/lib/firebaseConfig";
 
@@ -44,7 +46,22 @@ export const incrementViews = async (postId: string) => {
   }
 };
 
-// Toggle like
+// Check if user has liked a post
+export const checkUserLike = async (
+  postId: string,
+  userId: string
+): Promise<boolean> => {
+  try {
+    const likeRef = doc(db, "posts", postId, "likes", userId);
+    const likeSnap = await getDoc(likeRef);
+    return likeSnap.exists();
+  } catch (err) {
+    console.error("Error checking user like:", err);
+    return false;
+  }
+};
+
+// Toggle like using subcollection
 export const toggleLike = async (
   postId: string,
   userId: string,
@@ -54,24 +71,29 @@ export const toggleLike = async (
     console.log("toggleLike called:", { postId, userId, liked });
 
     const postRef = doc(db, "posts", postId);
+    const likeRef = doc(db, "posts", postId, "likes", userId);
 
     // Ensure post document exists
     await ensureDocExists(postRef, {
       id: postId,
       views: 0,
       likes: 0,
-      likedBy: [],
     });
 
     if (liked) {
+      // Remove like
+      await deleteDoc(likeRef);
       await updateDoc(postRef, {
         likes: increment(-1),
-        likedBy: arrayRemove(userId),
       });
     } else {
+      // Add like
+      await setDoc(likeRef, {
+        userId,
+        likedAt: serverTimestamp(),
+      });
       await updateDoc(postRef, {
         likes: increment(1),
-        likedBy: arrayUnion(userId),
       });
     }
 

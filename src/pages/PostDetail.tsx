@@ -18,7 +18,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import { auth, db } from "@/lib/firebaseConfig";
 import { onAuthStateChanged } from "firebase/auth";
 import { doc, updateDoc, increment, onSnapshot, getDoc, setDoc } from "firebase/firestore";
-import { toggleLike, toggleBookmark } from "@/lib/updatePostStats";
+import { toggleLike, toggleBookmark, checkUserLike } from "@/lib/updatePostStats";
 import { getUserProfile, UserProfile } from "@/lib/userProfile";
 
 const PostDetail = () => {
@@ -83,21 +83,17 @@ const PostDetail = () => {
     fetchPost();
   }, [slug]);
 
-  // Fetch liked and bookmarked state from DB
+  // Fetch liked and bookmarked state from DB using subcollections
   useEffect(() => {
     const fetchUserInteractions = async () => {
       if (!post?.id || !user) return;
 
       try {
-        const postRef = doc(db, "posts", post.id);
-        const postSnap = await getDoc(postRef);
-        
-        if (postSnap.exists()) {
-          const postData = postSnap.data();
-          const likedBy = postData.likedBy || [];
-          setLiked(likedBy.includes(user.uid));
-        }
+        // Check if user has liked this post (from subcollection)
+        const hasLiked = await checkUserLike(post.id, user.uid);
+        setLiked(hasLiked);
 
+        // Check bookmarks
         const userRef = doc(db, "users", user.uid);
         const userSnap = await getDoc(userRef);
         
@@ -125,7 +121,7 @@ const PostDetail = () => {
           const postRef = doc(db, "posts", post.id);
           const snap = await getDoc(postRef);
           if (!snap.exists()) {
-            await setDoc(postRef, { id: post.id, views: 0, likes: 0, likedBy: [] });
+            await setDoc(postRef, { id: post.id, views: 0, likes: 0 });
           }
           await updateDoc(postRef, { views: increment(1) });
         } catch (err) {
