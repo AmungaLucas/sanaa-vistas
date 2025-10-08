@@ -4,7 +4,7 @@ import { Input } from "@/components/ui/input";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { useToast } from "@/hooks/use-toast";
 import { db } from "@/lib/firebaseConfig";
-import { collection, addDoc, serverTimestamp } from "firebase/firestore";
+import { collection, addDoc, serverTimestamp, query, where, getDocs } from "firebase/firestore";
 import { Mail } from "lucide-react";
 
 const SubscribeForm = () => {
@@ -27,8 +27,27 @@ const SubscribeForm = () => {
     setLoading(true);
 
     try {
+      const normalizedEmail = email.trim().toLowerCase();
+      
+      // Check if email already exists
+      const q = query(
+        collection(db, "subscribers"),
+        where("email", "==", normalizedEmail)
+      );
+      const querySnapshot = await getDocs(q);
+
+      if (!querySnapshot.empty) {
+        toast({
+          title: "Already subscribed",
+          description: "This email is already subscribed to our newsletter.",
+          variant: "destructive",
+        });
+        setLoading(false);
+        return;
+      }
+
       await addDoc(collection(db, "subscribers"), {
-        email: email.trim().toLowerCase(),
+        email: normalizedEmail,
         subscribedAt: serverTimestamp(),
       });
 
